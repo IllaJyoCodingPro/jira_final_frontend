@@ -16,6 +16,16 @@ import {
 import { storyService } from '../../services/api';
 import './Reports.css';
 
+// Helper to normalize status strings (consistent with Board)
+const normalizeStatus = (status) => {
+    if (!status) return 'To Do';
+    const s = String(status).toUpperCase().replace('_', ' ').trim();
+    if (s.includes('PROGRESS')) return 'In Progress';
+    if (s.includes('REVIEW') || s.includes('VERIFY')) return 'Review';
+    if (s.includes('DONE') || s.includes('COMPLETED')) return 'Done';
+    return 'To Do';
+};
+
 const Reports = () => {
     const { projectId } = useParams();
     const [issues, setIssues] = useState([]);
@@ -37,9 +47,21 @@ const Reports = () => {
 
     const stats = useMemo(() => {
         const total = issues.length;
-        const done = issues.filter(i => i.status?.toLowerCase() === 'done').length;
-        const inProgress = issues.filter(i => i.status?.toLowerCase() === 'in progress').length;
-        const todo = issues.filter(i => i.status?.toLowerCase() === 'to do' || !i.status).length;
+
+        // Group by normalized status
+        const counts = issues.reduce((acc, issue) => {
+            const status = normalizeStatus(issue.status);
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {});
+
+        const done = counts['Done'] || 0;
+        // Combine 'In Progress' and 'Review' for the In Progress card, or just keep strict?
+        // The UI shows 3 cards: To Do, In Progress, Completed.
+        // It's safer to include Review in In Progress or having its own bucket, 
+        // but typically Review is a form of progress.
+        const inProgress = (counts['In Progress'] || 0) + (counts['Review'] || 0);
+        const todo = counts['To Do'] || 0;
 
         const typeCount = issues.reduce((acc, i) => {
             const type = i.issue_type || 'Story';
@@ -53,6 +75,7 @@ const Reports = () => {
             return acc;
         }, {});
 
+        // Return broken down stats + raw counts if needed
         return { total, done, inProgress, todo, typeCount, priorityCount };
     }, [issues]);
 
