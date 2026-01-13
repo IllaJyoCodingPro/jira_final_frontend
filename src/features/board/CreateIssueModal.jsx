@@ -6,7 +6,9 @@ import {
 } from 'lucide-react';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { storyService, authService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { authService } from '../../services/authService';
+import { teamService } from '../../services/teamService';
 import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';
@@ -149,14 +151,66 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
   const handleFileChange = e => setFile(e.target.files[0]);
 
+  // Determine permissions for the selected team
+  const selectedTeam = teams.find(t => t.id == formData.team_id);
+  const isTeamLead = (selectedTeam?.lead_id == user?.id) || (selectedTeam?.lead?.id == user?.id);
+
+  // Check if user is a lead of ANY team in this project (Project Lead)
+  const isProjectLead = teams.some(t => (t.lead_id == user?.id) || (t.lead?.id == user?.id));
+
+  const isAdmin = user?.view_mode === 'ADMIN';
+
+  // Logic: Allow assignment if Admin OR Team Lead OR Project Lead.
+  const canAssignOthers = isAdmin || isTeamLead || isProjectLead;
+
+  // Debug permissions
+  useEffect(() => {
+    // Only log if permissions are restrictive and user is present
+    if (user) {
+      console.log('[CreateIssueModal] Permission Check:', {
+        activeProjectId,
+        teamId: formData.team_id,
+        userId: user.id,
+        isTeamLead,
+        isProjectLead,
+        isAdmin,
+        canAssignOthers
+      });
+    }
+  }, [formData.team_id, isTeamLead, isProjectLead, isAdmin, user]);
+
+  // Enforce self-assignment for non-leads when team is selected
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // If I'm not allowed to assign others, force assignee to myself
+    if (!canAssignOthers && user) {
+      setFormData(prev => {
+        // Only update if not already set to self (to avoid infinite loop if user changes)
+        if (prev.assignee_id !== user.id) {
+          return {
+            ...prev,
+            assignee_id: user.id,
+            assignee: user.username
+          };
+        }
+        return prev;
+      });
+    }
+  }, [formData.team_id, canAssignOthers, user, isOpen, isProjectLead]);
+
+
   const handleAssigneeChange = (e) => {
-    const userId = e.target.value;
-    const selected = users.find(u => String(u.id) === userId);
+    const rawValue = e.target.value;
+    const userId = rawValue ? parseInt(rawValue, 10) : '';
+    const selected = users.find(u => u.id === userId);
     setFormData(prev => ({
       ...prev,
       assignee_id: userId || '',
       assignee: selected ? selected.username : ''
     }));
+
+    console.debug('Assignee selected', { rawValue, parsedId: userId, selected });
   };
 
   const handleSubmit = async (e) => {
@@ -165,10 +219,14 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     setError(null);
 
     try {
+      const assigned_to_value = (typeof formData.assignee_id === 'number' && !Number.isNaN(formData.assignee_id))
+        ? formData.assignee_id
+        : (formData.assignee_id ? parseInt(formData.assignee_id, 10) : null);
+
       const payload = {
         ...formData,
         project_id: activeProjectId || (formData.project_id ? parseInt(formData.project_id) : null),
-        assigned_to: formData.assignee_id ? parseInt(formData.assignee_id) : null,
+        assigned_to: assigned_to_value || null,
         team_id: formData.team_id ? parseInt(formData.team_id) : null,
         story_pointer: 0,
         support_doc: file,
@@ -176,12 +234,15 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         end_date: formData.end_date || null
       };
 
-      await storyService.create(payload);
-
-      // Sync team membership if assignee and team are selected
+      // Ensure assignee is part of the team *before* creating the issue. Some backend logic
+      // may reject or override assigned_to if the user is not a member of the selected team.
       if (payload.team_id && payload.assigned_to) {
+        console.debug('Syncing team membership before create', { team_id: payload.team_id, assigned_to: payload.assigned_to });
         await syncTeamMembership(payload.team_id, payload.assigned_to);
       }
+
+      console.debug('Create issue payload:', payload);
+      await storyService.create(payload);
 
       onIssueCreated();
 
@@ -381,8 +442,9 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     className="jira-select-premium"
                     value={formData.assignee_id}
                     onChange={handleAssigneeChange}
+                    disabled={!canAssignOthers} // Disable if not allowed to assign others
                   >
-                    <option value="">Unassigned</option>
+                    <option value="">{canAssignOthers ? "Unassigned" : "Assigned to me"}</option>
                     {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
                   </select>
                 </div>
@@ -398,6 +460,12 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     <option value="">No Team</option>
                     {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
+                  {teams.length === 0 && (
+                    <div className="warning-box" style={{ padding: '8px', background: '#ffebe6', color: '#de350b', borderRadius: '3px', marginTop: '8px', fontSize: '11px', lineHeight: '1.4' }}>
+                      <AlertCircle size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-top' }} />
+                      No teams found in this project. You must create a team first.
+                    </div>
+                  )}
                 </div>
 
                 <div className="sidebar-field">
@@ -447,7 +515,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
               type="submit"
               form="create-issue-form"
               variant="primary"
-              disabled={isLoading}
+              disabled={isLoading || (teams.length === 0 && !fetchingParents)} // Disable if no teams
               className="create-submit-btn"
             >
               {isLoading ? 'Creating…' : (createAnother ? 'Create & Add Another' : 'Create')}

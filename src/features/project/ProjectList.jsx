@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { projectService, storyService } from '../../services/api';
+import { projectService } from '../../services/projectService';
+import { storyService } from '../../services/storyService';
+import { authService } from '../../services/authService';
 import CreateProjectModal from './CreateProjectModal';
+import CreateTeamModal from './CreateTeamModal';
 import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -22,7 +25,24 @@ const ProjectList = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+    const [teamProjectId, setTeamProjectId] = useState(null);
+    const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+
+    // Fetch users for the Team Modal
+    useEffect(() => {
+        if (isTeamModalOpen) {
+            authService.getAllUsers()
+                .then(data => setUsers(Array.isArray(data) ? data : []))
+                .catch(err => console.error("Failed to fetch users", err));
+        }
+    }, [isTeamModalOpen]);
+
+    const handleOpenTeamModal = (projectId) => {
+        setTeamProjectId(projectId);
+        setIsTeamModalOpen(true);
+    };
 
     const fetchStats = async (projectsData) => {
         try {
@@ -167,7 +187,20 @@ const ProjectList = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onProjectCreated={fetchProjects}
+                onCreateTeam={handleOpenTeamModal}
             />
+
+            {isTeamModalOpen && (
+                <CreateTeamModal
+                    projectId={teamProjectId}
+                    users={users}
+                    onClose={() => setIsTeamModalOpen(false)}
+                    onSuccess={() => {
+                        setIsTeamModalOpen(false);
+                        // Optionally refresh specific project stats or just let it be
+                    }}
+                />
+            )}
         </div>
     );
 };

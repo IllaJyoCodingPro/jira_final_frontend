@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { storyService } from '../../services/api';
+import { useState, useEffect } from 'react';
+import { storyService } from '../../services/storyService';
 import { Activity, User } from 'lucide-react';
+import { formatRelativeTime, formatDateTime } from '../../utils/dateUtils'; // Shared date formatting
+import { logError } from '../../utils/renderUtils'; // Standardized logging
 import './ActivityLog.css';
 
 const ActivityLog = ({ issueId, refreshTrigger }) => {
@@ -12,7 +14,7 @@ const ActivityLog = ({ issueId, refreshTrigger }) => {
             const data = await storyService.getActivity(issueId);
             setActivities(data);
         } catch (error) {
-            console.error("Failed to fetch activity logs", error);
+            logError('ActivityLogFetch', error); // Standardized error reporting
         } finally {
             setIsLoading(false);
         }
@@ -23,42 +25,6 @@ const ActivityLog = ({ issueId, refreshTrigger }) => {
             fetchActivity();
         }
     }, [issueId, refreshTrigger]);
-
-    const formatRelativeTime = (dateStr) => {
-        if (!dateStr) return 'Unknown date';
-        try {
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMins / 60);
-            const diffDays = Math.floor(diffHours / 24);
-
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays}d ago`;
-
-            return date.toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        } catch (e) {
-            return 'Invalid date';
-        }
-    };
-
-    const formatFullTime = (dateStr) => {
-        return new Date(dateStr).toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
 
     const getActionLabel = (actionType) => {
         switch (actionType) {
@@ -71,37 +37,40 @@ const ActivityLog = ({ issueId, refreshTrigger }) => {
     };
 
     const renderChanges = (activity) => {
-        // Group multiple changes if they come in a comma-separated string from backend
-        // e.g. "Title: old -> new, Status: old -> new"
-        if (activity.action === 'UPDATED' && activity.changes && activity.changes.includes('→')) {
-            // Basic parsing for display
-            const lines = activity.changes.split('\n').filter(l => l.trim());
-            return (
-                <div className="activity-desc-box">
-                    {lines.map((line, idx) => {
-                        const parts = line.split(': ');
-                        if (parts.length < 2) return <div key={idx}>{line}</div>;
+        if (!activity.changes) return null;
 
-                        const field = parts[0].trim();
-                        const valParts = parts[1].split(' → ');
-                        if (valParts.length < 2) return <div key={idx}>{line}</div>;
+        // Check if it's a creation event or something else without explicit changes
+        if (activity.action === 'CREATED' || activity.action === 'ISSUE_CREATED') return 'Initial creation';
 
-                        return (
-                            <div key={idx} style={{ marginBottom: idx < lines.length - 1 ? '4px' : 0 }}>
-                                <span className="field-name">{field}</span>: {valParts[0]} <span className="change-arrow">→</span> <span className="new-value">{valParts[1]}</span>
-                            </div>
-                        );
-                    })}
-                </div>
-            );
-        }
+        // Split by newline or comma (handles different backend formats)
+        // We use a lookahead/regex to try and split intelligently
+        const rawLines = activity.changes.split(/,|\n/).map(l => l.trim()).filter(l => l.length > 0);
 
-        // Single field updated case
-        if (activity.action === 'FIELD_UPDATED' || (activity.changes && activity.changes.includes('→'))) {
-            return <div className="activity-desc-box">{activity.changes}</div>;
-        }
+        const parsedLines = rawLines.map((line, idx) => {
+            // Match pattern: "Field: Old -> New" or "Field: Old → New"
+            // Captures: 1=Field, 2=Old, 3=New
+            const match = line.match(/^(.*?):\s*(.*?)\s*(?:→|->)\s*(.*)$/);
 
-        return null;
+            if (match) {
+                const field = match[1].trim();
+                const oldVal = match[2].trim() || 'Empty';
+                const newVal = match[3].trim() || 'Empty';
+
+                return (
+                    <div key={idx} className="activity-change-row" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', marginBottom: '4px' }}>
+                        <span style={{ fontWeight: 500, color: '#44546f' }}>{field}:</span>
+                        <span style={{ color: '#ebecf0', textDecoration: 'line-through', fontSize: '12px' }}>{oldVal}</span>
+                        <span style={{ color: '#5e6c84', fontSize: '10px' }}>➜</span>
+                        <span style={{ fontWeight: 500, color: '#0052cc' }}>{newVal}</span>
+                    </div>
+                );
+            } else {
+                // Fallback for lines that don't match the Arrow format
+                return <div key={idx}>{line}</div>;
+            }
+        });
+
+        return <div className="activity-desc-box">{parsedLines}</div>;
     };
 
     if (isLoading) {
@@ -131,7 +100,7 @@ const ActivityLog = ({ issueId, refreshTrigger }) => {
                                     <span className="activity-action">{getActionLabel(activity.action)}</span>
                                     <span style={{ color: '#5e6c84' }}>an issue</span>
                                 </div>
-                                <span className="activity-time">{formatRelativeTime(activity.created_at)}</span>
+                                <span className="activity-time">{formatRelativeTime(activity.created_at)}</span> {/* Using shared relative time utility */}
                             </div>
 
                             <div className="activity-detail">
@@ -139,7 +108,7 @@ const ActivityLog = ({ issueId, refreshTrigger }) => {
                             </div>
 
                             <div className="activity-date-detail">
-                                {formatFullTime(activity.created_at)}
+                                {formatDateTime(activity.created_at)} {/* Standardized full date time display */}
                             </div>
                         </div>
                     ))
