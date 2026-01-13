@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { storyService } from '../../services/storyService';
 import { Activity, User } from 'lucide-react';
 import { formatRelativeTime, formatDateTime } from '../../utils/dateUtils'; // Shared date formatting

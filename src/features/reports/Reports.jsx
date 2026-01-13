@@ -37,9 +37,11 @@ const Reports = () => {
 
     const stats = useMemo(() => {
         const total = issues.length;
-        const done = issues.filter(i => i.status?.toLowerCase() === 'done').length;
-        const inProgress = issues.filter(i => i.status?.toLowerCase() === 'in progress').length;
-        const todo = issues.filter(i => i.status?.toLowerCase() === 'to do' || !i.status).length;
+        // Normalize status strings to handle different backend formats like 'TODO', 'To Do', 'IN_PROGRESS', 'inprogress', etc.
+        const normalize = (s) => (s ? s.toString().toLowerCase().replace(/[_\s-]+/g, '') : '');
+        const done = issues.filter(i => normalize(i.status) === 'done').length;
+        const inProgress = issues.filter(i => normalize(i.status) === 'inprogress').length;
+        const todo = issues.filter(i => !i.status || normalize(i.status) === 'todo').length;
 
         const typeCount = issues.reduce((acc, i) => {
             const type = i.issue_type || 'Story';
