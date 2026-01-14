@@ -11,6 +11,7 @@ import { authService } from '../../services/authService';
 import { teamService } from '../../services/teamService';
 import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES, ROLES } from '../../constants';
 import PropTypes from 'prop-types';
 import './CreateIssueModal.css';
 
@@ -23,9 +24,9 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     reviewer: '',
     release_number: '',
     sprint_number: '',
-    status: 'TODO',
-    issue_type: 'Story',
-    priority: 'Medium',
+    status: ISSUE_STATUS.TODO,
+    issue_type: ISSUE_TYPES.STORY,
+    priority: ISSUE_PRIORITY.MEDIUM,
     start_date: '',
     end_date: '',
     parent_issue_id: '',
@@ -72,7 +73,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         }
         // Case 2: Project Mode (Board) -> Fetch Context Options
         else if (activeProjectId && formData.issue_type) {
-          if (formData.issue_type === 'Epic') {
+          if (formData.issue_type === ISSUE_TYPES.EPIC) {
             setParentOptions([]); // Epic has no parent
           } else {
             const parents = await storyService.getAvailableParents(activeProjectId, formData.issue_type);
@@ -158,7 +159,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
   // Check if user is a lead of ANY team in this project (Project Lead)
   const isProjectLead = teams.some(t => (t.lead_id == user?.id) || (t.lead?.id == user?.id));
 
-  const isAdmin = user?.view_mode === 'ADMIN';
+  const isAdmin = user?.view_mode === ROLES.ADMIN;
 
   // Logic: Allow assignment if Admin OR Team Lead OR Project Lead.
   const canAssignOthers = isAdmin || isTeamLead || isProjectLead;
@@ -269,11 +270,11 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
   const getIssueTypeIcon = (type) => {
     switch (type) {
-      case 'Epic': return <Bookmark size={16} color="#904ee2" fill="#904ee2" />; // Purple for Epic
-      case 'Bug': return <AlertCircle size={16} color="#e5493a" />;
-      case 'Story': return <Bookmark size={16} color="#65ba43" fill="#65ba43" />; // Green Story
-      case 'Task': return <CheckSquare size={16} color="#4bade8" />;
-      case 'Subtask': return <CheckSquare size={16} color="#4bade8" />; // Same for subtask for now
+      case ISSUE_TYPES.EPIC: return <Bookmark size={16} color="#904ee2" fill="#904ee2" />; // Purple for Epic
+      case ISSUE_TYPES.BUG: return <AlertCircle size={16} color="#e5493a" />;
+      case ISSUE_TYPES.STORY: return <Bookmark size={16} color="#65ba43" fill="#65ba43" />; // Green Story
+      case ISSUE_TYPES.TASK: return <CheckSquare size={16} color="#4bade8" />;
+      case ISSUE_TYPES.SUBTASK: return <CheckSquare size={16} color="#4bade8" />; // Same for subtask for now
       default: return <CheckSquare size={16} color="#4bade8" />;
     }
   };
@@ -384,7 +385,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     </div>
                     {isTypeDropdownOpen && (
                       <div className="jira-dropdown-floating">
-                        {['Epic', 'Story', 'Task', 'Bug', 'Subtask'].map(type => (
+                        {[ISSUE_TYPES.EPIC, ISSUE_TYPES.STORY, ISSUE_TYPES.TASK, ISSUE_TYPES.BUG, ISSUE_TYPES.SUBTASK].map(type => (
                           <div
                             key={type}
                             className={`dropdown-item ${formData.issue_type === type ? 'active' : ''}`}
@@ -404,13 +405,13 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
                 {/* [NEW] Parent Issue Selector */}
                 {/* Only show if not Epic and options exist (or at least type is not Epic) */}
-                {formData.issue_type !== 'Epic' && (
+                {formData.issue_type !== ISSUE_TYPES.EPIC && (
                   <div className="sidebar-field">
                     <label className="jira-label">
                       {/* Show "Epic Link" for Story/Global, or "Parent" for others */}
                       {isGlobalMode ? "Epic Link" : (
-                        formData.issue_type === 'Story' ? 'Epic Link' :
-                          formData.issue_type === 'Subtask' ? 'Parent Task' :
+                        formData.issue_type === ISSUE_TYPES.STORY ? 'Epic Link' :
+                          formData.issue_type === ISSUE_TYPES.SUBTASK ? 'Parent Task' :
                             'Parent Issue')}
                     </label>
                     <select
@@ -419,7 +420,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                       value={formData.parent_issue_id || ''}
                       onChange={handleParentChange}
                       disabled={fetchingParents}
-                      required={formData.issue_type !== 'Epic'} // Enforce parent for non-Epics
+                      required={formData.issue_type !== ISSUE_TYPES.EPIC} // Enforce parent for non-Epics
                     >
                       <option value="">
                         {fetchingParents ? "Loading..." : "None"}
@@ -476,9 +477,9 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     value={formData.priority}
                     onChange={handleChange}
                   >
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
+                    <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
+                    <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
+                    <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
                   </select>
                 </div>
 

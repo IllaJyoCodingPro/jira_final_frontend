@@ -8,6 +8,7 @@ import { teamService } from '../../services/teamService';
 import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import usePermissions from '../../hooks/usePermissions';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ROLES } from '../../constants';
 import PropTypes from 'prop-types';
 
 const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDeleted }) => {
@@ -56,7 +57,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                 assignee_id: issue.assignee_id || '',
                 reviewer: issue.reviewer || '',
                 status: issue.status,
-                priority: issue.priority || 'Medium',
+                priority: issue.priority || ISSUE_PRIORITY.MEDIUM,
                 story_points: issue.story_points || '',
                 start_date: issue.start_date || '',
                 end_date: issue.end_date || '',
@@ -211,9 +212,9 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             required
                             disabled={isReadOnly}
                         >
-                            <option value="To Do">To Do</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Done">Done</option>
+                            <option value={ISSUE_STATUS.TODO}>{ISSUE_STATUS.TODO}</option>
+                            <option value={ISSUE_STATUS.IN_PROGRESS}>{ISSUE_STATUS.IN_PROGRESS}</option>
+                            <option value={ISSUE_STATUS.DONE}>{ISSUE_STATUS.DONE}</option>
                         </select>
                     </div>
 
@@ -226,9 +227,9 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             onChange={handleChange}
                             disabled={isReadOnly}
                         >
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
+                            <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
+                            <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
+                            <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
                         </select>
                     </div>
                 </div>
@@ -241,8 +242,8 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             value={formData.assignee_id || ''}
                             onChange={handleAssigneeChange}
                             required
-                            disabled={isReadOnly || user?.role === 'DEVELOPER'}
-                            style={{ backgroundColor: (isReadOnly || user?.role === 'DEVELOPER') ? '#f4f5f7' : '#fff', color: (isReadOnly || user?.role === 'DEVELOPER') ? '#a5adba' : '#172b4d' }}
+                            disabled={isReadOnly || user?.role === ROLES.DEVELOPER}
+                            style={{ backgroundColor: (isReadOnly || user?.role === ROLES.DEVELOPER) ? '#f4f5f7' : '#fff', color: (isReadOnly || user?.role === ROLES.DEVELOPER) ? '#a5adba' : '#172b4d' }}
                         >
                             <option value="">Select assignee...</option>
                             {users.map(user => (

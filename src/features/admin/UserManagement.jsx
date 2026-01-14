@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import ChangeRoleModal from './ChangeRoleModal';
 import AdminProjects from './AdminProjects';
 import ModeSwitchResponses from './ModeSwitchResponses';
+import { ROLES } from '../../constants';
 import './UserManagement.css';
 
 const UserManagement = () => {
@@ -68,9 +69,9 @@ const UserManagement = () => {
 
     const getRoleBadgeClass = (role) => {
         const roleClasses = {
-            ADMIN: 'role-badge-admin',
-            DEVELOPER: 'role-badge-developer',
-            TESTER: 'role-badge-tester'
+            [ROLES.ADMIN]: 'role-badge-admin',
+            [ROLES.DEVELOPER]: 'role-badge-developer',
+            [ROLES.TESTER]: 'role-badge-tester'
         };
         return roleClasses[role] || 'role-badge-other';
     };
@@ -127,9 +128,9 @@ const UserManagement = () => {
                             <label>Filter by role:</label>
                             <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
                                 <option value="ALL">All Roles</option>
-                                <option value="ADMIN">Admin</option>
-                                <option value="DEVELOPER">Developer</option>
-                                <option value="TESTER">Tester</option>
+                                <option value={ROLES.ADMIN}>{ROLES.ADMIN}</option>
+                                <option value={ROLES.DEVELOPER}>{ROLES.DEVELOPER}</option>
+                                <option value={ROLES.TESTER}>{ROLES.TESTER}</option>
                             </select>
                         </div>
                     </div>

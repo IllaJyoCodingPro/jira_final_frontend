@@ -9,17 +9,18 @@ import BoardColumn from './BoardColumn';
 import CreateIssueModal from './CreateIssueModal';
 import { usePermissions } from '../../hooks/usePermissions';
 import { Search, Plus, Kanban } from 'lucide-react';
+import { ISSUE_STATUS, ISSUE_TYPES } from '../../constants';
 import './Board.css';
 
-const COLUMNS = ['To Do', 'In Progress', 'Review', 'Done'];
+const COLUMNS = [ISSUE_STATUS.TODO, ISSUE_STATUS.IN_PROGRESS, ISSUE_STATUS.REVIEW, ISSUE_STATUS.DONE];
 
 const normalizeStatus = (status) => {
-    if (!status) return 'To Do';
+    if (!status) return ISSUE_STATUS.TODO;
     const s = status.toUpperCase().replace('_', ' ').trim();
-    if (s.includes('PROGRESS')) return 'In Progress';
-    if (s.includes('REVIEW') || s.includes('VERIFY')) return 'Review';
-    if (s.includes('DONE') || s.includes('COMPLETED')) return 'Done';
-    return 'To Do'; // Default fallback
+    if (s.includes('PROGRESS')) return ISSUE_STATUS.IN_PROGRESS;
+    if (s.includes('REVIEW') || s.includes('VERIFY')) return ISSUE_STATUS.REVIEW;
+    if (s.includes('DONE') || s.includes('COMPLETED')) return ISSUE_STATUS.DONE;
+    return ISSUE_STATUS.TODO; // Default fallback
 };
 
 const Board = () => {
@@ -79,7 +80,7 @@ const Board = () => {
             (issue.story_pointer && issue.story_pointer.toLowerCase().includes(searchQuery.toLowerCase()));
 
         const typeMatch = selectedType === 'All' ||
-            (issue.issue_type || issue.type || 'STORY').toUpperCase() === selectedType.toUpperCase();
+            (issue.issue_type || issue.type || ISSUE_TYPES.STORY).toUpperCase() === selectedType.toUpperCase();
 
         const teamMatch = selectedTeam === 'All' || String(issue.team_id) === String(selectedTeam);
 
@@ -88,10 +89,10 @@ const Board = () => {
 
     // Separate Epics and standard issues, applying filters to BOTH
     const epics = issues.filter(i =>
-        (i.issue_type || '').toUpperCase() === 'EPIC' && isMatch(i)
+        (i.issue_type || '').toUpperCase() === ISSUE_TYPES.EPIC.toUpperCase() && isMatch(i)
     );
 
-    const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== 'EPIC');
+    const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== ISSUE_TYPES.EPIC.toUpperCase());
 
     // Filter tasks for the board
     const getFilteredTasks = () => {

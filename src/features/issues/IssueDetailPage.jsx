@@ -8,6 +8,7 @@ import { storyService } from '../../services/storyService';
 import { teamService } from '../../services/teamService';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
 import Button from '../../components/common/Button';
 import IssueDetailModal from '../board/IssueDetailModal';
 import ActivityLog from './ActivityLog';
@@ -70,18 +71,19 @@ const IssueDetailPage = () => {
     if (!issue) return <div className="issue-detail-page">Issue not found.</div>;
 
     const getIcon = (type) => {
-        switch (type?.toLowerCase()) {
-            case 'bug': return <AlertCircle size={16} color="#e5493a" />;
-            case 'story': return <Bookmark size={16} color="#65ba43" />;
-            case 'task': default: return <CheckSquare size={16} color="#4bade8" />;
+        const t = type?.toUpperCase() || '';
+        switch (t) {
+            case ISSUE_TYPES.BUG.toUpperCase(): return <AlertCircle size={16} color="#e5493a" />;
+            case ISSUE_TYPES.STORY.toUpperCase(): return <Bookmark size={16} color="#65ba43" />;
+            case ISSUE_TYPES.TASK.toUpperCase(): default: return <CheckSquare size={16} color="#4bade8" />;
         }
     };
 
     const getStatusClass = (status) => {
-        const s = status?.toLowerCase() || '';
-        if (s.includes('progress')) return 'status-inprogress';
-        if (s.includes('done') || s.includes('complete')) return 'status-done';
-        if (s.includes('review')) return 'status-review';
+        const s = status?.toUpperCase() || '';
+        if (s.includes('PROGRESS')) return 'status-inprogress';
+        if (s.includes('DONE') || s.includes('COMPLETE')) return 'status-done';
+        if (s.includes('REVIEW')) return 'status-review';
         return 'status-todo';
     };
 
@@ -134,14 +136,14 @@ const IssueDetailPage = () => {
                         <div className="field-label">Type:</div>
                         <div className="field-value">
                             {getIcon(issue.issue_type)}
-                            {issue.issue_type || 'Task'}
+                            {issue.issue_type || ISSUE_TYPES.TASK}
                         </div>
                     </div>
                     <div className="info-field">
                         <div className="field-label">Priority:</div>
                         <div className="field-value">
-                            <Flag size={14} color={issue.priority === 'High' ? '#ff5630' : '#42526e'} />
-                            {issue.priority || 'Medium'}
+                            <Flag size={14} color={issue.priority === ISSUE_PRIORITY.HIGH ? '#ff5630' : '#42526e'} />
+                            {issue.priority || ISSUE_PRIORITY.MEDIUM}
                         </div>
                     </div>
                     <div className="info-field">
@@ -189,7 +191,7 @@ const IssueDetailPage = () => {
                     <div className="info-field">
                         <div className="field-label">Resolution:</div>
                         <div className="field-value">
-                            {issue.status?.toLowerCase() === 'done' ? 'Done' : 'Unresolved'}
+                            {issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase() ? 'Done' : 'Unresolved'}
                         </div>
                     </div>
                 </div>
