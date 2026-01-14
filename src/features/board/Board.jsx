@@ -89,17 +89,10 @@ const Board = () => {
 
     // Separate Epics and standard issues, applying filters to BOTH
     const epics = issues.filter(i =>
-<<<<<<< HEAD
         (i.issue_type || '').toUpperCase() === ISSUE_TYPES.EPIC.toUpperCase() && isMatch(i)
     );
 
     const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== ISSUE_TYPES.EPIC.toUpperCase());
-=======
-        (i.issue_type || '').toUpperCase() === 'EPIC' && isMatch(i)
-    );
-
-    const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== 'EPIC');
->>>>>>> origin/main
 
     // Filter tasks for the board
     const getFilteredTasks = () => {

@@ -57,8 +57,4 @@ api.interceptors.response.use(
     }
 );
 
-<<<<<<< HEAD
 export default api;
-=======
-export default api;
->>>>>>> origin/main

@@ -73,11 +73,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         }
         // Case 2: Project Mode (Board) -> Fetch Context Options
         else if (activeProjectId && formData.issue_type) {
-<<<<<<< HEAD
           if (formData.issue_type === ISSUE_TYPES.EPIC) {
-=======
-          if (formData.issue_type === 'Epic') {
->>>>>>> origin/main
             setParentOptions([]); // Epic has no parent
           } else {
             const parents = await storyService.getAvailableParents(activeProjectId, formData.issue_type);
@@ -162,12 +158,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
   // Check if user is a lead of ANY team in this project (Project Lead)
   const isProjectLead = teams.some(t => (t.lead_id == user?.id) || (t.lead?.id == user?.id));
-
-<<<<<<< HEAD
   const isAdmin = user?.view_mode === ROLES.ADMIN;
-=======
-  const isAdmin = user?.view_mode === 'ADMIN';
->>>>>>> origin/main
 
   // Logic: Allow assignment if Admin OR Team Lead OR Project Lead.
   const canAssignOthers = isAdmin || isTeamLead || isProjectLead;
@@ -413,22 +404,13 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
                 {/* [NEW] Parent Issue Selector */}
                 {/* Only show if not Epic and options exist (or at least type is not Epic) */}
-<<<<<<< HEAD
                 {formData.issue_type !== ISSUE_TYPES.EPIC && (
-=======
-                {formData.issue_type !== 'Epic' && (
->>>>>>> origin/main
                   <div className="sidebar-field">
                     <label className="jira-label">
                       {/* Show "Epic Link" for Story/Global, or "Parent" for others */}
                       {isGlobalMode ? "Epic Link" : (
-<<<<<<< HEAD
                         formData.issue_type === ISSUE_TYPES.STORY ? 'Epic Link' :
                           formData.issue_type === ISSUE_TYPES.SUBTASK ? 'Parent Task' :
-=======
-                        formData.issue_type === 'Story' ? 'Epic Link' :
-                          formData.issue_type === 'Subtask' ? 'Parent Task' :
->>>>>>> origin/main
                             'Parent Issue')}
                     </label>
                     <select
@@ -437,11 +419,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                       value={formData.parent_issue_id || ''}
                       onChange={handleParentChange}
                       disabled={fetchingParents}
-<<<<<<< HEAD
                       required={formData.issue_type !== ISSUE_TYPES.EPIC} // Enforce parent for non-Epics
-=======
-                      required={formData.issue_type !== 'Epic'} // Enforce parent for non-Epics
->>>>>>> origin/main
                     >
                       <option value="">
                         {fetchingParents ? "Loading..." : "None"}
