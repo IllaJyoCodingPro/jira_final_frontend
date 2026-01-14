@@ -8,7 +8,10 @@ import { storyService } from '../../services/storyService';
 import { teamService } from '../../services/teamService';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
+<<<<<<< HEAD
 import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
+=======
+>>>>>>> origin/main
 import Button from '../../components/common/Button';
 import IssueDetailModal from '../board/IssueDetailModal';
 import ActivityLog from './ActivityLog';

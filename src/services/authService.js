@@ -1,6 +1,9 @@
 import api from './apiClient';
 import { endpoints } from './endpoints';
+<<<<<<< HEAD
 import { ROLES } from '../constants';
+=======
+>>>>>>> origin/main
 
 export const authService = {
     login: async (email, password) => {
@@ -16,7 +19,11 @@ export const authService = {
         return response.data;
     },
 
+<<<<<<< HEAD
     signup: async (username, email, password, role = ROLES.DEVELOPER) => {
+=======
+    signup: async (username, email, password, role = 'DEVELOPER') => {
+>>>>>>> origin/main
         const response = await api.post(endpoints.auth.signup, {
             username,
             email,
