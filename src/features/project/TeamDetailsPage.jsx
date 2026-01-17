@@ -115,7 +115,7 @@ const TeamDetailsPage = () => {
 
         try {
             await teamService.delete(teamId);
-            navigate(`/ projects / ${projectId}/teams`);
+            navigate(`/projects/${projectId}/teams`);
         } catch (err) {
             console.error("Failed to delete team", err);
             const errorDetail = err.response?.data?.detail || err.message;

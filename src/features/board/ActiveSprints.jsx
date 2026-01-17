@@ -69,7 +69,7 @@ const ActiveSprints = () => {
     }, [issues, search]);
 
     const handleIssueClick = (issue) => {
-        navigate(`/ projects / ${projectId} /issues/${issue.id} `);
+        navigate(`/projects/${projectId}/issues/${issue.id}`);
     };
 
     const getInitials = (name) => {
@@ -95,10 +95,10 @@ const ActiveSprints = () => {
                         style={{ width: 300 }}
                     />
                 </div>
-                <Button onClick={() => navigate(`/ projects / ${projectId}/board`)}>
+                <Button onClick={() => navigate(`/projects/${projectId}/board`)}>
                     View Board
-                </Button >
-            </div >
+                </Button>
+            </div>
 
             <div style={{
                 backgroundColor: '#0052cc',

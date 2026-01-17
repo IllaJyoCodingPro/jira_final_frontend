@@ -26,8 +26,7 @@ const IssueTypeIcon = ({ type }) => {
 
 const PriorityIcon = ({ priority }) => {
     switch (priority?.toUpperCase()) {
-        case ISSUE_PRIORITY.HIGH.toUpperCase():
-        case ISSUE_PRIORITY.CRITICAL.toUpperCase(): return <ChevronUp size={16} color="#ff5630" strokeWidth={3} />;
+        case ISSUE_PRIORITY.HIGH.toUpperCase(): return <ChevronUp size={16} color="#ff5630" strokeWidth={3} />;
         case ISSUE_PRIORITY.MEDIUM.toUpperCase(): return <Minus size={16} color="#ffab00" strokeWidth={3} />;
         case ISSUE_PRIORITY.LOW.toUpperCase(): return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
         default: return null;

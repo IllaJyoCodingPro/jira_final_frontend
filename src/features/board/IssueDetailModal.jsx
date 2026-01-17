@@ -9,7 +9,6 @@ import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import usePermissions from '../../hooks/usePermissions';
 import { ISSUE_STATUS, ISSUE_PRIORITY, ROLES } from '../../constants';
-import './IssueDetailModal.css';
 import PropTypes from 'prop-types';
 
 const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDeleted }) => {

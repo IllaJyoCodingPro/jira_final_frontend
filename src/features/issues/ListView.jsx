@@ -48,8 +48,8 @@ const ListView = () => {
             await storyService.update(issueId, updatedIssue);
             setIssues(prev => prev.map(i => i.id === issueId ? updatedIssue : i));
         } catch (error) {
-            console.error(`Failed to update ${field} `, error);
-            alert(`Failed to update ${field} `);
+            console.error(`Failed to update ${field}`, error);
+            alert(`Failed to update ${field}`);
         }
     };
 
@@ -158,7 +158,7 @@ const ListView = () => {
                     {sortedIssues.map(issue => (
                         <tr key={issue.id}>
                             <td
-                                onClick={() => navigate(`/ projects / ${projectId} /issues/${issue.id} `)}
+                                onClick={() => navigate(`/projects/${projectId}/issues/${issue.id}`)}
                                 style={{ cursor: 'pointer', color: '#0052cc', whiteSpace: 'nowrap' }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -166,11 +166,11 @@ const ListView = () => {
                                     {issue.story_pointer}
                                 </div>
                             </td>
-                            <td onClick={() => navigate(`/ projects / ${projectId} /issues/${issue.id} `)} style={{ cursor: 'pointer' }}>
+                            <td onClick={() => navigate(`/projects/${projectId}/issues/${issue.id}`)} style={{ cursor: 'pointer' }}>
                                 {issue.title}
                             </td>
                             <td>
-                                <div className={`status - tag status - ${issue.status?.toLowerCase().replace(/\s+/g, '-')} `}>
+                                <div className={`status-tag status-${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}>
                                     <select
                                         className="inline-edit-select"
                                         value={issue.status}
