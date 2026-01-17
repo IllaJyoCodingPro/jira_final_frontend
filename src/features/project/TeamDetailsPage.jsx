@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Users, ArrowLeft, UserPlus, Trash2, Shield, Loader2, X, CheckCircle, Mail } from 'lucide-react';
+import { ROLES } from '../../constants';
+import {
+    Users, ArrowLeft, UserPlus, Trash2, Shield, Loader2, X, CheckCircle, Mail
+} from 'lucide-react';
 import { teamService } from '../../services/teamService';
 import { authService } from '../../services/authService';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -72,7 +75,7 @@ const TeamDetailsPage = () => {
         } catch (err) {
             console.error("Failed to add members", err);
             const errorDetail = err.response?.data?.detail || err.message;
-            alert(`Failed to add members: ${errorDetail}`);
+            alert(`Failed to add members: ${errorDetail} `);
         } finally {
             setSaving(false);
         }
@@ -101,18 +104,18 @@ const TeamDetailsPage = () => {
         } catch (err) {
             console.error("Failed to remove member", err);
             const errorDetail = err.response?.data?.detail || err.message;
-            alert(`Failed to remove member: ${errorDetail}`);
+            alert(`Failed to remove member: ${errorDetail} `);
         } finally {
             setSaving(false);
         }
     };
 
     const handleDeleteTeam = async () => {
-        if (!window.confirm(`Delete team "${team.name}"? This action cannot be undone.`)) return;
+        if (!window.confirm(`Delete team "${team.name}" ? This action cannot be undone.`)) return;
 
         try {
             await teamService.delete(teamId);
-            navigate(`/projects/${projectId}/teams`);
+            navigate(`/ projects / ${projectId}/teams`);
         } catch (err) {
             console.error("Failed to delete team", err);
             const errorDetail = err.response?.data?.detail || err.message;
@@ -138,7 +141,7 @@ const TeamDetailsPage = () => {
     };
 
     const availableUsers = allUsers.filter(user =>
-        user.role !== 'ADMIN' && !team?.members?.some(member => member.id === user.id)
+        user.role !== ROLES.ADMIN && !team?.members?.some(member => member.id === user.id)
     );
 
     if (loading) {

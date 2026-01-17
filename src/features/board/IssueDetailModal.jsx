@@ -9,6 +9,7 @@ import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import usePermissions from '../../hooks/usePermissions';
 import { ISSUE_STATUS, ISSUE_PRIORITY, ROLES } from '../../constants';
+import './IssueDetailModal.css';
 import PropTypes from 'prop-types';
 
 const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDeleted }) => {
@@ -242,8 +243,8 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             value={formData.assignee_id || ''}
                             onChange={handleAssigneeChange}
                             required
-                            disabled={isReadOnly || user?.role === 'DEVELOPER'}
-                            style={{ backgroundColor: (isReadOnly || user?.role === 'DEVELOPER') ? '#f4f5f7' : '#fff', color: (isReadOnly || user?.role === 'DEVELOPER') ? '#a5adba' : '#172b4d' }}
+                            disabled={isReadOnly || user?.role === ROLES.DEVELOPER}
+                            style={{ backgroundColor: (isReadOnly || user?.role === ROLES.DEVELOPER) ? '#f4f5f7' : '#fff', color: (isReadOnly || user?.role === ROLES.DEVELOPER) ? '#a5adba' : '#172b4d' }}
                         >
                             <option value="">Select assignee...</option>
                             {users.map(user => (

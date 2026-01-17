@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
+import { ROLES } from '../../constants';
 import { Camera, Edit2, Save, X, Loader2, User } from 'lucide-react';
 import { formatError } from '../../utils/renderUtils';
 import ModeSwitchRequestModal from './ModeSwitchRequestModal';
@@ -424,8 +425,8 @@ const ProfilePage = () => {
                                         </p>
                                         <div className="mode-toggle-group">
                                             <button
-                                                className={`mode-btn ${user.view_mode === 'DEVELOPER' ? 'active' : ''}`}
-                                                onClick={() => handleSwitchMode('DEVELOPER')}
+                                                className={`mode-btn ${user.view_mode === ROLES.DEVELOPER ? 'active' : ''}`}
+                                                onClick={() => handleSwitchMode(ROLES.DEVELOPER)}
                                                 disabled={switchingMode}
                                             >
                                                 <div className="mode-btn-content">
@@ -437,8 +438,8 @@ const ProfilePage = () => {
                                                 </div>
                                             </button>
                                             <button
-                                                className={`mode-btn ${user.view_mode === 'ADMIN' ? 'active' : ''}`}
-                                                onClick={() => handleSwitchMode('ADMIN')}
+                                                className={`mode-btn ${user.view_mode === ROLES.ADMIN ? 'active' : ''}`}
+                                                onClick={() => handleSwitchMode(ROLES.ADMIN)}
                                                 disabled={switchingMode}
                                             >
                                                 <div className="mode-btn-content">

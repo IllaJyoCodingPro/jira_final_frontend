@@ -6,6 +6,7 @@ import { syncTeamMembership } from '../../utils/teamUtils';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES, ROLES } from '../../constants';
 import './IssueDetailsDrawer.css';
 
 const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
@@ -13,8 +14,8 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        status: 'To Do',
-        priority: 'Medium',
+        status: ISSUE_STATUS.TODO,
+        priority: ISSUE_PRIORITY.MEDIUM,
         story_points: '',
         assignee: '',
         reviewer: '',
@@ -40,8 +41,8 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
             setFormData({
                 title: issue.title || '',
                 description: issue.description || '',
-                status: issue.status || 'To Do',
-                priority: issue.priority || 'Medium',
+                status: issue.status || ISSUE_STATUS.TODO,
+                priority: issue.priority || ISSUE_PRIORITY.MEDIUM,
                 story_points: issue.story_points || '',
                 assignee: issue.assignee || '',
                 reviewer: issue.reviewer || '',
@@ -125,19 +126,19 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
 
     const getIcon = (type) => {
         switch (type?.toUpperCase()) {
-            case 'BUG': return <AlertCircle size={16} color="#e5493a" />;
-            case 'STORY': return <Bookmark size={16} color="#63ba3c" fill="#63ba3c" />;
-            case 'TASK': return <CheckSquare size={16} color="#4bade8" fill="#4bade8" />;
+            case ISSUE_TYPES.BUG.toUpperCase(): return <AlertCircle size={16} color="#e5493a" />;
+            case ISSUE_TYPES.STORY.toUpperCase(): return <Bookmark size={16} color="#63ba3c" fill="#63ba3c" />;
+            case ISSUE_TYPES.TASK.toUpperCase(): return <CheckSquare size={16} color="#4bade8" fill="#4bade8" />;
             default: return <CheckSquare size={16} color="#4bade8" />;
         }
     };
 
     const getPriorityIcon = (priority) => {
         switch (priority?.toUpperCase()) {
-            case 'HIGH':
+            case ISSUE_PRIORITY.HIGH.toUpperCase():
             case 'CRITICAL': return <ChevronUp size={16} color="#ff5630" strokeWidth={3} />;
-            case 'MEDIUM': return <Minus size={16} color="#ffab00" strokeWidth={3} />;
-            case 'LOW': return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
+            case ISSUE_PRIORITY.MEDIUM.toUpperCase(): return <Minus size={16} color="#ffab00" strokeWidth={3} />;
+            case ISSUE_PRIORITY.LOW.toUpperCase(): return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
             default: return null;
         }
     };
@@ -207,10 +208,10 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                 onChange={(e) => handleChange('status', e.target.value)}
                                 disabled={!canUpdateStatus(issue)}
                             >
-                                <option value="To Do">To Do</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Review">Review</option>
-                                <option value="Done">Done</option>
+                                <option value={ISSUE_STATUS.TODO}>{ISSUE_STATUS.TODO}</option>
+                                <option value={ISSUE_STATUS.IN_PROGRESS}>{ISSUE_STATUS.IN_PROGRESS}</option>
+                                <option value={ISSUE_STATUS.REVIEW}>{ISSUE_STATUS.REVIEW}</option>
+                                <option value={ISSUE_STATUS.DONE}>{ISSUE_STATUS.DONE}</option>
                             </select>
                         </div>
                     </div>
@@ -242,9 +243,9 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                         onChange={(e) => handleChange('priority', e.target.value)}
                                         disabled={isReadOnly}
                                     >
-                                        <option value="High">High</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="Low">Low</option>
+                                        <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
+                                        <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
+                                        <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
                                     </select>
                                 </div>
                             </div>
@@ -320,8 +321,8 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                 setFormData({
                                     title: issue.title || '',
                                     description: issue.description || '',
-                                    status: issue.status || 'To Do',
-                                    priority: issue.priority || 'Medium',
+                                    status: issue.status || ISSUE_STATUS.TODO,
+                                    priority: issue.priority || ISSUE_PRIORITY.MEDIUM,
                                     story_points: issue.story_points || '',
                                     assignee: issue.assignee || '',
                                     reviewer: issue.reviewer || '',

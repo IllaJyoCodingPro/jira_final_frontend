@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { X, AlertTriangle } from 'lucide-react';
+import { X, Shield, ShieldAlert, ShieldCheck, Check } from 'lucide-react';
+import { ROLES } from '../../constants';
+import { authService } from '../../services/authService';
 import './ChangeRoleModal.css';
 
 const ChangeRoleModal = ({ user, onClose, onUpdate }) => {
@@ -59,7 +61,7 @@ const ChangeRoleModal = ({ user, onClose, onUpdate }) => {
                             </select>
                         </div>
 
-                        {selectedRole === 'ADMIN' && (
+                        {selectedRole === ROLES.ADMIN && (
                             <div className="admin-warning">
                                 <AlertTriangle size={16} />
                                 <span>Admins have full system access.</span>

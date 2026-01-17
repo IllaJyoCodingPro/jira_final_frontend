@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Search, Filter, Plus, LayoutGrid, List, SlidersHorizontal, Download } from 'lucide-react';
+import { ISSUE_PRIORITY } from '../../constants';
 import { storyService } from '../../services/storyService';
 import { teamService } from '../../services/teamService';
 
@@ -101,8 +103,8 @@ const Issues = () => {
       } else {
         if (!sprintMap[issue.sprint_number]) {
           sprintMap[issue.sprint_number] = {
-            id: `sprint-${issue.sprint_number}`,
-            name: `Sprint ${issue.sprint_number}`,
+            id: `sprint - ${issue.sprint_number} `,
+            name: `Sprint ${issue.sprint_number} `,
             issues: []
           };
         }
@@ -110,12 +112,16 @@ const Issues = () => {
       }
     });
 
-    const weight = { high: 3, medium: 2, low: 1 };
+    const weight = {
+      [ISSUE_PRIORITY.HIGH.toLowerCase()]: 3,
+      [ISSUE_PRIORITY.MEDIUM.toLowerCase()]: 2,
+      [ISSUE_PRIORITY.LOW.toLowerCase()]: 1
+    };
 
     const sortIssues = arr =>
       [...arr].sort((a, b) =>
-        (weight[(b.priority || 'medium').toLowerCase()] ?? 0) -
-        (weight[(a.priority || 'medium').toLowerCase()] ?? 0)
+        (weight[(b.priority || ISSUE_PRIORITY.MEDIUM).toLowerCase()] ?? 0) -
+        (weight[(a.priority || ISSUE_PRIORITY.MEDIUM).toLowerCase()] ?? 0)
       );
 
     setBacklogIssues(sortIssues(backlog));
@@ -251,7 +257,7 @@ const Issues = () => {
             title={sprint.name}
             issues={sprint.issues}
             teams={teams}
-            onIssueClick={(issue) => navigate(`/projects/${projectId}/issues/${issue.id}`)}
+            onIssueClick={(issue) => navigate(`/ projects / ${projectId} /issues/${issue.id} `)}
           />
         ))}
 
@@ -274,7 +280,7 @@ const Issues = () => {
             issues={backlogIssues}
             isBacklog
             teams={teams}
-            onIssueClick={(issue) => navigate(`/projects/${projectId}/issues/${issue.id}`)}
+            onIssueClick={(issue) => navigate(`/ projects / ${projectId} /issues/${issue.id} `)}
           />
 
         </div>

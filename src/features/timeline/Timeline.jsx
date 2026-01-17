@@ -18,8 +18,7 @@ import {
     X,
     Plus
 } from 'lucide-react';
-import { storyService } from '../../services/storyService';
-import { authService } from '../../services/authService';
+import { ISSUE_STATUS, ISSUE_PRIORITY } from '../../constants';
 import IssueDetailsDrawer from '../issues/IssueDetailsDrawer';
 import './Timeline.css';
 
@@ -134,16 +133,19 @@ const Timeline = () => {
     };
 
     const getStatusColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case 'done': return '#36b37e';
-            case 'review': return '#8777d9';
-            case 'in progress': return '#0052cc';
-            case 'to do': default: return '#42526e';
+        switch (status?.toString().toUpperCase()) {
+            case ISSUE_STATUS.DONE.toUpperCase(): return '#36b37e';
+            case ISSUE_STATUS.REVIEW.toUpperCase(): return '#8777d9';
+            case ISSUE_STATUS.IN_PROGRESS.toUpperCase().replace(/\s+/g, ''):
+            case ISSUE_STATUS.IN_PROGRESS.toUpperCase(): return '#0052cc';
+            case ISSUE_STATUS.TODO.toUpperCase():
+            case ISSUE_STATUS.TODO.toUpperCase().replace(/\s+/g, ''):
+            default: return '#42526e';
         }
     };
 
     const isOverdue = (issue) => {
-        if (!issue.end_date || issue.status?.toLowerCase() === 'done') return false;
+        if (!issue.end_date || issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase()) return false;
         return new Date(issue.end_date) < new Date();
     };
 
@@ -201,10 +203,10 @@ const Timeline = () => {
     // Statistics
     const stats = useMemo(() => {
         const total = issues.length;
-        const done = issues.filter(i => i.status?.toLowerCase() === 'done').length;
-        const review = issues.filter(i => i.status?.toLowerCase() === 'review').length;
-        const inProgress = issues.filter(i => i.status?.toLowerCase() === 'in progress').length;
-        const todo = issues.filter(i => i.status?.toLowerCase() === 'to do').length;
+        const done = issues.filter(i => i.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase()).length;
+        const review = issues.filter(i => i.status?.toUpperCase() === ISSUE_STATUS.REVIEW.toUpperCase()).length;
+        const inProgress = issues.filter(i => i.status?.toUpperCase() === ISSUE_STATUS.IN_PROGRESS.toUpperCase()).length;
+        const todo = issues.filter(i => i.status?.toUpperCase() === ISSUE_STATUS.TODO.toUpperCase()).length;
         const overdue = issues.filter(isOverdue).length;
         const completion = total > 0 ? Math.round((done / total) * 100) : 0;
 
@@ -350,7 +352,7 @@ const Timeline = () => {
                         <div className="filter-group">
                             <label>Status</label>
                             <div className="filter-options">
-                                {['To Do', 'In Progress', 'Review', 'Done'].map(status => (
+                                {[ISSUE_STATUS.TODO, ISSUE_STATUS.IN_PROGRESS, ISSUE_STATUS.REVIEW, ISSUE_STATUS.DONE].map(status => (
                                     <button
                                         key={status}
                                         className={`filter-chip ${filters.status.includes(status) ? 'active' : ''}`}
@@ -367,7 +369,7 @@ const Timeline = () => {
                         <div className="filter-group">
                             <label>Priority</label>
                             <div className="filter-options">
-                                {['High', 'Medium', 'Low'].map(priority => (
+                                {[ISSUE_PRIORITY.HIGH, ISSUE_PRIORITY.MEDIUM, ISSUE_PRIORITY.LOW].map(priority => (
                                     <button
                                         key={priority}
                                         className={`filter-chip ${filters.priority.includes(priority) ? 'active' : ''}`}
@@ -479,7 +481,7 @@ const Timeline = () => {
                                                 <div
                                                     className="group-progress-fill"
                                                     style={{
-                                                        width: `${(group.issues.filter(i => i.status?.toLowerCase() === 'done').length / group.issues.length) * 100}%`
+                                                        width: `${(group.issues.filter(i => i.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase()).length / group.issues.length) * 100}%`
                                                     }}
                                                 ></div>
                                             </div>
@@ -583,7 +585,7 @@ const Timeline = () => {
                                                 >
                                                     <div className="bar-content">
                                                         <span className="bar-label">{issue.title}</span>
-                                                        {issue.status?.toLowerCase() === 'done' && (
+                                                        {issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase() && (
                                                             <Check size={12} className="bar-icon" />
                                                         )}
                                                         {overdue && (
@@ -591,7 +593,7 @@ const Timeline = () => {
                                                         )}
                                                     </div>
                                                     {/* Progress indicator for in-progress items */}
-                                                    {issue.status?.toLowerCase() === 'in progress' && (
+                                                    {issue.status?.toUpperCase() === ISSUE_STATUS.IN_PROGRESS.toUpperCase() && (
                                                         <div className="bar-progress">
                                                             <div className="bar-progress-fill" style={{ width: '60%' }}></div>
                                                         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { CheckSquare, Bookmark, AlertCircle, MoreHorizontal, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { MoreHorizontal, AlertCircle, Bookmark, CheckSquare, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
 import './IssueItem.css';
 
 const IssueItem = ({ issue, index, onClick, teams = [] }) => {
@@ -9,16 +10,17 @@ const IssueItem = ({ issue, index, onClick, teams = [] }) => {
 
     const getIcon = (type) => {
         switch (type?.toLowerCase()) {
-            case 'bug': return <AlertCircle size={14} color="#e5493a" />;
-            case 'story': return <Bookmark size={14} color="#65ba43" />;
-            case 'task': default: return <CheckSquare size={14} color="#4bade8" />;
+            case ISSUE_TYPES.BUG.toLowerCase(): return <AlertCircle size={14} color="#e5493a" />;
+            case ISSUE_TYPES.STORY.toLowerCase(): return <Bookmark size={14} color="#65ba43" />;
+            case ISSUE_TYPES.TASK.toLowerCase():
+            default: return <CheckSquare size={14} color="#4bade8" />;
         }
     };
 
     const getPriorityIcon = (priority) => {
         switch (priority?.toLowerCase()) {
-            case 'high': return <ArrowUp size={14} color="#e5493a" />;
-            case 'low': return <ArrowDown size={14} color="#2684ff" />;
+            case ISSUE_PRIORITY.HIGH.toLowerCase(): return <ArrowUp size={14} color="#e5493a" />;
+            case ISSUE_PRIORITY.LOW.toLowerCase(): return <ArrowDown size={14} color="#2684ff" />;
             default: return <Minus size={14} color="#ffab00" />;
         }
     };

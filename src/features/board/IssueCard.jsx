@@ -7,26 +7,29 @@ import {
     ChevronUp,
     ChevronDown,
     Minus,
-    Users
+    Users,
+    MoreHorizontal,
+    Clock
 } from 'lucide-react';
+import { ISSUE_PRIORITY, ISSUE_TYPES, ISSUE_STATUS } from '../../constants';
 import './IssueCard.css';
 
 // Mappings for icons/colors can be moved to a shared utility
 const IssueTypeIcon = ({ type }) => {
     switch (type?.toUpperCase()) {
-        case 'BUG': return <AlertCircle size={14} color="#e5493a" />;
-        case 'STORY': return <Bookmark size={14} color="#63ba3c" fill="#63ba3c" />;
-        case 'TASK': return <CheckSquare size={14} color="#4bade8" fill="#4bade8" />;
+        case ISSUE_TYPES.BUG.toUpperCase(): return <AlertCircle size={14} color="#e5493a" />;
+        case ISSUE_TYPES.STORY.toUpperCase(): return <Bookmark size={14} color="#63ba3c" fill="#63ba3c" />;
+        case ISSUE_TYPES.TASK.toUpperCase(): return <CheckSquare size={14} color="#4bade8" fill="#4bade8" />;
         default: return <CheckSquare size={14} color="#4bade8" />;
     }
 };
 
 const PriorityIcon = ({ priority }) => {
     switch (priority?.toUpperCase()) {
-        case 'HIGH':
-        case 'CRITICAL': return <ChevronUp size={16} color="#ff5630" strokeWidth={3} />;
-        case 'MEDIUM': return <Minus size={16} color="#ffab00" strokeWidth={3} />;
-        case 'LOW': return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
+        case ISSUE_PRIORITY.HIGH.toUpperCase():
+        case ISSUE_PRIORITY.CRITICAL.toUpperCase(): return <ChevronUp size={16} color="#ff5630" strokeWidth={3} />;
+        case ISSUE_PRIORITY.MEDIUM.toUpperCase(): return <Minus size={16} color="#ffab00" strokeWidth={3} />;
+        case ISSUE_PRIORITY.LOW.toUpperCase(): return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
         default: return null;
     }
 };
@@ -52,7 +55,7 @@ const IssueCard = ({ issue, index, onClick, teams = [] }) => {
                         <span className="jira-issue-title">{issue.title}</span>
                         <div className="jira-issue-meta">
                             <div className="jira-issue-metadata-left">
-                                <IssueTypeIcon type={issue.issue_type || issue.type || 'STORY'} />
+                                <IssueTypeIcon type={issue.issue_type || issue.type || ISSUE_TYPES.STORY} />
                                 <span className="jira-issue-key">
                                     {issue.story_pointer || `${issue.project_prefix || 'JIRA'}-${issue.id}`}
                                 </span>
@@ -65,7 +68,7 @@ const IssueCard = ({ issue, index, onClick, teams = [] }) => {
                                         <span>{teamName}</span>
                                     </div>
                                 )}
-                                <PriorityIcon priority={issue.priority || 'MEDIUM'} />
+                                <PriorityIcon priority={issue.priority || ISSUE_PRIORITY.MEDIUM} />
                                 <div className="jira-avatar-circle" title={issue.assignee || 'Unassigned'}>
                                     {issue.assignee ? issue.assignee.charAt(0).toUpperCase() : '?'}
                                 </div>

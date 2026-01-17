@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { ChevronRight, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { ISSUE_STATUS } from '../../constants';
 import IssueItem from './IssueItem';
 
 const SprintSection = ({ title, sprintId, issues, dates, isBacklog = false, onIssueClick, teams = [] }) => {
     const [isExpanded, setIsExpanded] = useState(true);
 
     // Calculate stats
-    const todo = issues.filter(i => i.status === 'To Do').length;
-    const inProgress = issues.filter(i => i.status === 'In Progress').length;
-    const done = issues.filter(i => i.status === 'Done').length;
+    const todo = issues.filter(i => i.status === ISSUE_STATUS.TODO).length;
+    const inProgress = issues.filter(i => i.status === ISSUE_STATUS.IN_PROGRESS).length;
+    const done = issues.filter(i => i.status === ISSUE_STATUS.DONE).length;
 
     return (
         <div className={`sprint-container ${isBacklog ? 'backlog-section' : ''}`}>

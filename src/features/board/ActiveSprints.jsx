@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { ISSUE_TYPES } from '../../constants';
 import { storyService } from '../../services/storyService';
 import { projectService } from '../../services/projectService';
 import Button from '../../components/common/Button';
@@ -68,7 +69,7 @@ const ActiveSprints = () => {
     }, [issues, search]);
 
     const handleIssueClick = (issue) => {
-        navigate(`/projects/${projectId}/issues/${issue.id}`);
+        navigate(`/ projects / ${projectId} /issues/${issue.id} `);
     };
 
     const getInitials = (name) => {
@@ -94,10 +95,10 @@ const ActiveSprints = () => {
                         style={{ width: 300 }}
                     />
                 </div>
-                <Button onClick={() => navigate(`/projects/${projectId}/board`)}>
+                <Button onClick={() => navigate(`/ projects / ${projectId}/board`)}>
                     View Board
-                </Button>
-            </div>
+                </Button >
+            </div >
 
             <div style={{
                 backgroundColor: '#0052cc',
@@ -121,144 +122,146 @@ const ActiveSprints = () => {
                 </div>
             </div>
 
-            {inProgressIssues.length === 0 ? (
-                <div style={{
-                    textAlign: 'center',
-                    padding: '60px 20px',
-                    color: '#5e6c84',
-                    fontSize: '14px'
-                }}>
-                    <p style={{ marginBottom: '8px', fontSize: '16px' }}>No issues in progress</p>
-                    <p>Start working on issues to see them here with their timeline.</p>
-                </div>
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {inProgressIssues.map(issue => {
-                        const daysLeft = calculateDaysLeft(issue.start_date, issue.end_date);
-                        const isOverdue = daysLeft !== null && daysLeft < 0;
-                        const isUrgent = daysLeft !== null && daysLeft >= 0 && daysLeft <= 3;
+            {
+                inProgressIssues.length === 0 ? (
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '60px 20px',
+                        color: '#5e6c84',
+                        fontSize: '14px'
+                    }}>
+                        <p style={{ marginBottom: '8px', fontSize: '16px' }}>No issues in progress</p>
+                        <p>Start working on issues to see them here with their timeline.</p>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {inProgressIssues.map(issue => {
+                            const daysLeft = calculateDaysLeft(issue.start_date, issue.end_date);
+                            const isOverdue = daysLeft !== null && daysLeft < 0;
+                            const isUrgent = daysLeft !== null && daysLeft >= 0 && daysLeft <= 3;
 
-                        return (
-                            <div
-                                key={issue.id}
-                                onClick={() => handleIssueClick(issue)}
-                                style={{
-                                    backgroundColor: 'white',
-                                    border: '1px solid #dfe1e6',
-                                    borderLeft: `4px solid ${isOverdue ? '#de350b' : isUrgent ? '#ffab00' : '#0052cc'}`,
-                                    borderRadius: '3px',
-                                    padding: '16px 20px',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#f4f5f7';
-                                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'white';
-                                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
-                                }}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                                            <span style={{
-                                                fontSize: '12px',
-                                                color: '#5e6c84',
-                                                fontWeight: '600',
-                                                backgroundColor: '#f4f5f7',
-                                                padding: '2px 8px',
-                                                borderRadius: '3px'
-                                            }}>
-                                                {issue.story_pointer || `${project?.project_prefix || 'JIRA'}-${issue.id}`}
-                                            </span>
-                                            <span style={{
-                                                fontSize: '12px',
-                                                color: '#0052cc',
-                                                backgroundColor: '#deebff',
-                                                padding: '2px 8px',
-                                                borderRadius: '3px',
-                                                fontWeight: '500'
-                                            }}>
-                                                📌 {issue.issue_type || 'Story'}
-                                            </span>
-                                        </div>
-                                        <h3 style={{
-                                            margin: '0 0 8px 0',
-                                            fontSize: '15px',
-                                            fontWeight: '500',
-                                            color: '#172b4d'
-                                        }}>
-                                            {issue.title}
-                                        </h3>
-                                        {issue.description && (
-                                            <p style={{
-                                                margin: 0,
-                                                fontSize: '13px',
-                                                color: '#5e6c84',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap',
-                                                maxWidth: '600px'
-                                            }}>
-                                                {issue.description}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                                        {daysLeft !== null && (
-                                            <div style={{
-                                                textAlign: 'center',
-                                                minWidth: '80px'
-                                            }}>
-                                                <div style={{
-                                                    fontSize: '24px',
-                                                    fontWeight: '700',
-                                                    color: isOverdue ? '#de350b' : isUrgent ? '#ffab00' : '#0052cc',
-                                                    lineHeight: '1'
-                                                }}>
-                                                    {isOverdue ? Math.abs(daysLeft) : daysLeft}
-                                                </div>
-                                                <div style={{
-                                                    fontSize: '11px',
+                            return (
+                                <div
+                                    key={issue.id}
+                                    onClick={() => handleIssueClick(issue)}
+                                    style={{
+                                        backgroundColor: 'white',
+                                        border: '1px solid #dfe1e6',
+                                        borderLeft: `4px solid ${isOverdue ? '#de350b' : isUrgent ? '#ffab00' : '#0052cc'}`,
+                                        borderRadius: '3px',
+                                        padding: '16px 20px',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#f4f5f7';
+                                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'white';
+                                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                                                <span style={{
+                                                    fontSize: '12px',
                                                     color: '#5e6c84',
-                                                    marginTop: '4px',
+                                                    fontWeight: '600',
+                                                    backgroundColor: '#f4f5f7',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '3px'
+                                                }}>
+                                                    {issue.story_pointer || `${project?.project_prefix || 'JIRA'}-${issue.id}`}
+                                                </span>
+                                                <span style={{
+                                                    fontSize: '12px',
+                                                    color: '#0052cc',
+                                                    backgroundColor: '#deebff',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '3px',
                                                     fontWeight: '500'
                                                 }}>
-                                                    {isOverdue ? 'DAYS OVERDUE' : 'DAYS LEFT'}
-                                                </div>
+                                                    📌 {issue.issue_type || ISSUE_TYPES.STORY}
+                                                </span>
                                             </div>
-                                        )}
-
-                                        <div style={{
-                                            width: '32px',
-                                            height: '32px',
-                                            borderRadius: '50%',
-                                            backgroundColor: '#0052cc',
-                                            color: 'white',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '14px',
-                                            fontWeight: '600'
-                                        }}>
-                                            {getInitials(issue.assignee)}
+                                            <h3 style={{
+                                                margin: '0 0 8px 0',
+                                                fontSize: '15px',
+                                                fontWeight: '500',
+                                                color: '#172b4d'
+                                            }}>
+                                                {issue.title}
+                                            </h3>
+                                            {issue.description && (
+                                                <p style={{
+                                                    margin: 0,
+                                                    fontSize: '13px',
+                                                    color: '#5e6c84',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                    maxWidth: '600px'
+                                                }}>
+                                                    {issue.description}
+                                                </p>
+                                            )}
                                         </div>
 
-                                        <div style={{ fontSize: '20px', color: '#42526e' }}>
-                                            -
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                                            {daysLeft !== null && (
+                                                <div style={{
+                                                    textAlign: 'center',
+                                                    minWidth: '80px'
+                                                }}>
+                                                    <div style={{
+                                                        fontSize: '24px',
+                                                        fontWeight: '700',
+                                                        color: isOverdue ? '#de350b' : isUrgent ? '#ffab00' : '#0052cc',
+                                                        lineHeight: '1'
+                                                    }}>
+                                                        {isOverdue ? Math.abs(daysLeft) : daysLeft}
+                                                    </div>
+                                                    <div style={{
+                                                        fontSize: '11px',
+                                                        color: '#5e6c84',
+                                                        marginTop: '4px',
+                                                        fontWeight: '500'
+                                                    }}>
+                                                        {isOverdue ? 'DAYS OVERDUE' : 'DAYS LEFT'}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                borderRadius: '50%',
+                                                backgroundColor: '#0052cc',
+                                                color: 'white',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '14px',
+                                                fontWeight: '600'
+                                            }}>
+                                                {getInitials(issue.assignee)}
+                                            </div>
+
+                                            <div style={{ fontSize: '20px', color: '#42526e' }}>
+                                                -
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
+                            );
+                        })}
+                    </div>
+                )
+            }
+        </div >
     );
 };
 

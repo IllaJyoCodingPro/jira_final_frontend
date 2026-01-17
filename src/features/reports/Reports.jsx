@@ -14,6 +14,7 @@ import {
     Minus
 } from 'lucide-react';
 import { storyService } from '../../services/storyService';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
 import './Reports.css';
 
 const Reports = () => {
@@ -39,18 +40,18 @@ const Reports = () => {
         const total = issues.length;
         // Normalize status strings to handle different backend formats like 'TODO', 'To Do', 'IN_PROGRESS', 'inprogress', etc.
         const normalize = (s) => (s ? s.toString().toLowerCase().replace(/[_\s-]+/g, '') : '');
-        const done = issues.filter(i => normalize(i.status) === 'done').length;
-        const inProgress = issues.filter(i => normalize(i.status) === 'inprogress').length;
-        const todo = issues.filter(i => !i.status || normalize(i.status) === 'todo').length;
+        const done = issues.filter(i => normalize(i.status) === normalize(ISSUE_STATUS.DONE)).length;
+        const inProgress = issues.filter(i => normalize(i.status) === normalize(ISSUE_STATUS.IN_PROGRESS)).length;
+        const todo = issues.filter(i => !i.status || normalize(i.status) === normalize(ISSUE_STATUS.TODO)).length;
 
         const typeCount = issues.reduce((acc, i) => {
-            const type = i.issue_type || 'Story';
+            const type = i.issue_type || ISSUE_TYPES.STORY;
             acc[type] = (acc[type] || 0) + 1;
             return acc;
         }, {});
 
         const priorityCount = issues.reduce((acc, i) => {
-            const priority = i.priority || 'Medium';
+            const priority = i.priority || ISSUE_PRIORITY.MEDIUM;
             acc[priority] = (acc[priority] || 0) + 1;
             return acc;
         }, {});
@@ -183,15 +184,15 @@ const Reports = () => {
                             <div className="chart-subtitle">Breakdown of issues by importance (High/Medium/Low)</div>
                         </div>
                         <div className="priority-grid">
-                            {['High', 'Medium', 'Low'].map((p) => {
+                            {[ISSUE_PRIORITY.HIGH, ISSUE_PRIORITY.MEDIUM, ISSUE_PRIORITY.LOW].map((p) => {
                                 const count = stats.priorityCount[p] || 0;
                                 const percent = stats.total > 0 ? (count / stats.total) * 100 : 0;
                                 return (
                                     <div key={p} className={`priority-card priority-${p.toLowerCase()}`}>
                                         <div className="priority-icon-wrapper">
-                                            {p === 'High' && <ChevronUp size={24} />}
-                                            {p === 'Medium' && <Minus size={24} />}
-                                            {p === 'Low' && <ChevronDown size={24} />}
+                                            {p === ISSUE_PRIORITY.HIGH && <ChevronUp size={24} />}
+                                            {p === ISSUE_PRIORITY.MEDIUM && <Minus size={24} />}
+                                            {p === ISSUE_PRIORITY.LOW && <ChevronDown size={24} />}
                                         </div>
                                         <div className="priority-info">
                                             <span className="priority-count">{count}</span>

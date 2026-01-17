@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { storyService } from '../../services/storyService';
 import { teamService } from '../../services/teamService';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
+import IssueDetailsDrawer from './IssueDetailsDrawer';
 import { AlertCircle, Bookmark, CheckSquare, ChevronUp, ChevronDown, Minus, Search, List, Filter } from 'lucide-react';
 import { usePermissions } from '../../hooks/usePermissions';
 import './ListView.css';
@@ -46,8 +48,8 @@ const ListView = () => {
             await storyService.update(issueId, updatedIssue);
             setIssues(prev => prev.map(i => i.id === issueId ? updatedIssue : i));
         } catch (error) {
-            console.error(`Failed to update ${field}`, error);
-            alert(`Failed to update ${field}`);
+            console.error(`Failed to update ${field} `, error);
+            alert(`Failed to update ${field} `);
         }
     };
 
@@ -80,19 +82,19 @@ const ListView = () => {
 
     const getIcon = (type) => {
         switch (type?.toUpperCase()) {
-            case 'BUG': return <AlertCircle size={14} color="#e5493a" />;
-            case 'STORY': return <Bookmark size={14} color="#63ba3c" fill="#63ba3c" />;
-            case 'TASK': return <CheckSquare size={14} color="#4bade8" fill="#4bade8" />;
+            case ISSUE_TYPES.BUG.toUpperCase(): return <AlertCircle size={14} color="#e5493a" />;
+            case ISSUE_TYPES.STORY.toUpperCase(): return <Bookmark size={14} color="#63ba3c" fill="#63ba3c" />;
+            case ISSUE_TYPES.TASK.toUpperCase(): return <CheckSquare size={14} color="#4bade8" fill="#4bade8" />;
             default: return <CheckSquare size={14} color="#4bade8" />;
         }
     };
 
     const getPriorityIcon = (priority) => {
         switch (priority?.toUpperCase()) {
-            case 'HIGH':
+            case ISSUE_PRIORITY.HIGH.toUpperCase():
             case 'CRITICAL': return <ChevronUp size={16} color="#ff5630" strokeWidth={3} />;
-            case 'MEDIUM': return <Minus size={16} color="#ffab00" strokeWidth={3} />;
-            case 'LOW': return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
+            case ISSUE_PRIORITY.MEDIUM.toUpperCase(): return <Minus size={16} color="#ffab00" strokeWidth={3} />;
+            case ISSUE_PRIORITY.LOW.toUpperCase(): return <ChevronDown size={16} color="#0065ff" strokeWidth={3} />;
             default: return null;
         }
     };
@@ -156,7 +158,7 @@ const ListView = () => {
                     {sortedIssues.map(issue => (
                         <tr key={issue.id}>
                             <td
-                                onClick={() => navigate(`/projects/${projectId}/issues/${issue.id}`)}
+                                onClick={() => navigate(`/ projects / ${projectId} /issues/${issue.id} `)}
                                 style={{ cursor: 'pointer', color: '#0052cc', whiteSpace: 'nowrap' }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -164,11 +166,11 @@ const ListView = () => {
                                     {issue.story_pointer}
                                 </div>
                             </td>
-                            <td onClick={() => navigate(`/projects/${projectId}/issues/${issue.id}`)} style={{ cursor: 'pointer' }}>
+                            <td onClick={() => navigate(`/ projects / ${projectId} /issues/${issue.id} `)} style={{ cursor: 'pointer' }}>
                                 {issue.title}
                             </td>
                             <td>
-                                <div className={`status-tag status-${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}>
+                                <div className={`status - tag status - ${issue.status?.toLowerCase().replace(/\s+/g, '-')} `}>
                                     <select
                                         className="inline-edit-select"
                                         value={issue.status}
@@ -209,7 +211,7 @@ const ListView = () => {
                                     {getPriorityIcon(issue.priority)}
                                     <select
                                         className="inline-edit-select"
-                                        value={issue.priority || 'Medium'}
+                                        value={issue.priority || ISSUE_PRIORITY.MEDIUM}
                                         onChange={(e) => handleUpdate(issue.id, 'priority', e.target.value)}
                                         disabled={isIssueReadOnly(issue)}
                                     >

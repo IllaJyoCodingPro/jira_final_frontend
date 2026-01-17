@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { projectService } from '../../services/projectService';
 import { storyService } from '../../services/storyService';
 import { authService } from '../../services/authService';
+import { ISSUE_STATUS, ROLES } from '../../constants';
 import CreateProjectModal from './CreateProjectModal';
 import CreateTeamModal from './CreateTeamModal';
 import Button from '../../components/common/Button';
@@ -50,13 +51,13 @@ const ProjectList = () => {
             await Promise.all(projectsData.map(async (project) => {
                 const stories = await storyService.getByProject(project.id);
                 const total = stories.length;
-                const done = stories.filter(s => ['Done', 'DONE', 'COMPLETED'].includes(s.status)).length;
+                const done = stories.filter(s => [ISSUE_STATUS.DONE, 'DONE', 'COMPLETED'].includes(s.status?.toUpperCase() || s.status)).length;
                 stats[project.id] = {
                     total,
                     done,
                     percent: total > 0 ? Math.round((done / total) * 100) : 0,
-                    todo: stories.filter(s => ['To Do', 'TODO'].includes(s.status)).length,
-                    inProgress: stories.filter(s => ['In Progress', 'IN_PROGRESS'].includes(s.status)).length,
+                    todo: stories.filter(s => [ISSUE_STATUS.TODO, 'TODO'].includes(s.status?.toUpperCase() || s.status)).length,
+                    inProgress: stories.filter(s => [ISSUE_STATUS.IN_PROGRESS, 'IN_PROGRESS'].includes(s.status?.toUpperCase() || s.status)).length,
                 };
             }));
             setProjectStats(stats);
@@ -106,7 +107,7 @@ const ProjectList = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    {user?.view_mode === 'ADMIN' && !user?.is_master_admin && (
+                    {user?.view_mode === ROLES.ADMIN && !user?.is_master_admin && (
                         <Button onClick={() => setIsModalOpen(true)} variant="primary">Create Project</Button>
                     )}
                 </div>
@@ -171,7 +172,7 @@ const ProjectList = () => {
                             <Layers size={48} color="#dfe1e6" />
                             <h3>No projects found</h3>
                             <p>Get started by creating your first project.</p>
-                            {user?.view_mode === 'ADMIN' ? (
+                            {user?.view_mode === ROLES.ADMIN ? (
                                 <Button onClick={() => setIsModalOpen(true)} variant="primary">New Project</Button>
                             ) : (
                                 <p style={{ fontSize: '13px', color: '#6b778c', marginTop: '10px' }}>

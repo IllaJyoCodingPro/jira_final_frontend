@@ -3,6 +3,8 @@ import Modal from '../../components/common/Modal';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import { projectService } from '../../services/projectService';
+import { teamService } from '../../services/teamService';
+import { ROLES } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';
 
@@ -11,7 +13,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated, onCreateTeam })
     const [name, setName] = useState('');
     const [prefix, setPrefix] = useState('');
 
-    const isAdminMode = user?.view_mode === 'ADMIN';
+    const isAdminMode = user?.view_mode === ROLES.ADMIN;
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);

@@ -11,7 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import IssueDetailModal from '../board/IssueDetailModal';
 import ActivityLog from './ActivityLog';
-import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES, ROLES } from '../../constants';
 import './IssueDetailPage.css';
 
 const IssueDetailPage = () => {
@@ -81,9 +81,9 @@ const IssueDetailPage = () => {
 
     const getStatusClass = (status) => {
         const s = status?.toUpperCase() || '';
-        if (s.includes('PROGRESS')) return 'status-inprogress';
-        if (s.includes('DONE') || s.includes('COMPLETE')) return 'status-done';
-        if (s.includes('REVIEW')) return 'status-review';
+        if (s === ISSUE_STATUS.IN_PROGRESS.toUpperCase() || s.includes('PROGRESS')) return 'status-inprogress';
+        if (s === ISSUE_STATUS.DONE.toUpperCase() || s.includes('DONE') || s.includes('COMPLETE')) return 'status-done';
+        if (s === ISSUE_STATUS.REVIEW.toUpperCase() || s.includes('REVIEW')) return 'status-review';
         return 'status-todo';
     };
 
@@ -191,7 +191,7 @@ const IssueDetailPage = () => {
                     <div className="info-field">
                         <div className="field-label">Resolution:</div>
                         <div className="field-value">
-                            {issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase() ? 'Done' : 'Unresolved'}
+                            {issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase() ? ISSUE_STATUS.DONE : 'Unresolved'}
                         </div>
                     </div>
                 </div>

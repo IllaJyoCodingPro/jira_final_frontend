@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User as UserIcon, Save, Users } from 'lucide-react';
+import { ROLES } from '../../constants';
 import { teamService } from '../../services/teamService';
 import { adminService } from '../../services/authService';
 import './ManageTeamsModal.css';
@@ -111,7 +112,7 @@ const ManageTeamsModal = ({ project, onClose }) => {
                                                 >
                                                     <option value="">Select Lead...</option>
                                                     {users
-                                                        .filter(u => u.role !== 'ADMIN')
+                                                        .filter(u => u.role !== ROLES.ADMIN)
                                                         .map(user => (
                                                             <option key={user.id} value={user.id}>
                                                                 {user.username} ({user.role})
