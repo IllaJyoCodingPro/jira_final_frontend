@@ -141,9 +141,18 @@ const YourWork = () => {
                 {/* Right Column: Activity Feed */}
                 <div className="activity-column">
                     <div className="stat-card" style={{ height: '100%' }}>
-                        <div className="activity-card-header">
-                            <Activity size={24} color="#0052cc" />
-                            <h2 style={{ fontSize: '18px', margin: 0, fontWeight: 600 }}>Recent Activity</h2>
+                        <div className="activity-card-header" style={{ justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <Activity size={24} color="#0052cc" />
+                                <h2 style={{ fontSize: '18px', margin: 0, fontWeight: 600 }}>Recent Activity</h2>
+                            </div>
+                            <button
+                                className="jira-nav-link"
+                                style={{ height: 'auto', padding: '4px 8px', fontSize: '12px' }}
+                                onClick={() => navigate('/activity')}
+                            >
+                                View all
+                            </button>
                         </div>
 
                         {recentActivity.length > 0 ? (

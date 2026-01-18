@@ -131,7 +131,7 @@ const ProjectSummary = () => {
                                 <Activity size={20} color="#0052cc" />
                                 <h2>Recent Activity</h2>
                             </div>
-                            <Link to={`/projects/${projectId}/issues`} className="section-link">
+                            <Link to={`/projects/${projectId}/activity`} className="section-link">
                                 View all <ArrowRight size={14} />
                             </Link>
                         </div>

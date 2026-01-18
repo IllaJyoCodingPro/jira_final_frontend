@@ -8,18 +8,10 @@ const DashboardRedirect = () => {
     useEffect(() => {
         const checkProjects = async () => {
             try {
-                const projects = await projectService.getAll();
-                if (projects && projects.length > 0) {
-                    // Redirect to the first project's board
-                    navigate(`/projects/${projects[0].id}/board`);
-                } else {
-                    // If no projects, stay here (which will render the layout but empty content, 
-                    // actually better to go to project list so they can create one)
-                    navigate('/projects');
-                }
+                navigate('/my-work');
             } catch (error) {
-                console.error("Failed to fetch projects for redirect", error);
-                navigate('/projects');
+                console.error("Failed to redirect", error);
+                navigate('/my-work');
             }
         };
         checkProjects();

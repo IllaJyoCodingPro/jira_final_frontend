@@ -22,7 +22,8 @@ export default function ForgotPassword() {
             await authService.forgotPassword(email);
             setMessage("If an account exists for " + email + ", you will receive a password reset link shortly.");
         } catch (err) {
-            setError(err.response?.data?.detail || "Something went wrong. Please try again.");
+            const serverError = err.response?.data;
+            setError(serverError ? formatError(serverError) : (err.message || "Something went wrong. Please try again."));
         } finally {
             setLoading(false);
         }

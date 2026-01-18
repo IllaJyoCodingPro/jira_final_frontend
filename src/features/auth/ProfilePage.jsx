@@ -325,8 +325,6 @@ const ProfilePage = () => {
                                             <div
                                                 className="profile-avatar-large"
                                                 onClick={() => setIsEditing(true)}
-                                                style={{ cursor: 'pointer', position: 'relative' }}
-                                                title="Click to edit profile"
                                             >
                                                 {user.profile_pic ? (
                                                     <img src={`/api${user.profile_pic}`} alt="" className="avatar-img-large" />
@@ -335,21 +333,7 @@ const ProfilePage = () => {
                                                         {user.username.charAt(0).toUpperCase()}
                                                     </div>
                                                 )}
-                                                <div className="avatar-edit-badge" style={{
-                                                    position: 'absolute',
-                                                    bottom: 0,
-                                                    right: 0,
-                                                    background: '#0052cc',
-                                                    color: 'white',
-                                                    borderRadius: '50%',
-                                                    padding: '8px',
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                    border: '3px solid white',
-                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                                                    zIndex: 10
-                                                }}>
+                                                <div className="avatar-edit-badge">
                                                     <Edit2 size={16} />
                                                 </div>
                                             </div>

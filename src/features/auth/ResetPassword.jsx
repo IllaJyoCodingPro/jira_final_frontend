@@ -53,7 +53,8 @@ export default function ResetPassword() {
                 navigate("/login", { state: { message: "Password reset successful! Please log in with your new password." } });
             }, 3000);
         } catch (err) {
-            setError(err.response?.data?.detail || "Failed to reset password. The link may have expired.");
+            const serverError = err.response?.data;
+            setError(serverError ? formatError(serverError) : (err.message || "Failed to reset password. The link may have expired."));
         } finally {
             setLoading(false);
         }

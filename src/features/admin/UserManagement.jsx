@@ -67,13 +67,14 @@ const UserManagement = () => {
         }
     };
 
-    const getRoleBadgeClass = (role) => {
+    const getRoleBadgeClass = (user) => {
+        if (user.email === 'admin@jira.local') return 'role-badge-master-admin';
         const roleClasses = {
             [ROLES.ADMIN]: 'role-badge-admin',
             [ROLES.DEVELOPER]: 'role-badge-developer',
             [ROLES.TESTER]: 'role-badge-tester'
         };
-        return roleClasses[role] || 'role-badge-other';
+        return roleClasses[user.role] || 'role-badge-other';
     };
 
     if (loading && activeTab === 'USERS') {
@@ -164,19 +165,21 @@ const UserManagement = () => {
                                             </td>
                                             <td>{user.email}</td>
                                             <td>
-                                                <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                                                    {user.role}
+                                                <span className={`role-badge ${getRoleBadgeClass(user)}`}>
+                                                    {user.email === 'admin@jira.local' ? 'MASTER ADMIN' : user.role}
                                                 </span>
                                             </td>
                                             <td>{new Date(user.created_at).toLocaleDateString()}</td>
                                             <td>
-                                                <button
-                                                    className="change-role-btn"
-                                                    onClick={() => setSelectedUser(user)}
-                                                >
-                                                    <Edit2 size={14} />
-                                                    Change Role
-                                                </button>
+                                                {user.email !== 'admin@jira.local' && (
+                                                    <button
+                                                        className="change-role-btn"
+                                                        onClick={() => setSelectedUser(user)}
+                                                    >
+                                                        <Edit2 size={14} />
+                                                        Change Role
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))

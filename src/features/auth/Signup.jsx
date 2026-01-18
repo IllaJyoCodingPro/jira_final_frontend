@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
+import { formatError } from '../../utils/renderUtils';
 import './JiraAuth.css';
 
 export default function Signup() {
@@ -47,7 +48,8 @@ export default function Signup() {
             await signup(form.full_name, form.email.toLowerCase(), form.password, form.role);
             navigate("/login", { state: { message: "Signup successful! Please log in with your new account." } });
         } catch (err) {
-            const errorMessage = err.response?.data?.detail || err.message || "Unknown error";
+            const serverError = err.response?.data;
+            const errorMessage = serverError ? formatError(serverError) : (err.message || "Unknown error");
             setPasswordError("Signup failed: " + errorMessage);
         } finally {
             setLoading(false);

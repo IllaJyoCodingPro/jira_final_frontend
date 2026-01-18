@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
+import { formatError } from '../../utils/renderUtils';
 import './JiraAuth.css';
 
 export default function Login() {
@@ -27,10 +28,15 @@ export default function Login() {
         setLoading(true);
         try {
             await login(form.email.toLowerCase(), form.password);
-            navigate("/dashboard");
+            navigate("/my-work");
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.detail || err.message || "Invalid email or password");
+            const serverError = err.response?.data;
+            if (serverError) {
+                setError(formatError(serverError));
+            } else {
+                setError(err.message || "Invalid email or password");
+            }
         } finally {
             setLoading(false);
         }

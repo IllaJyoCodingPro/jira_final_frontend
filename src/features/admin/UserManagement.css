@@ -170,6 +170,13 @@
     color: #bf2600;
 }
 
+.role-badge-master-admin {
+    background: #e6effc;
+    color: #0052cc;
+    border: 1px solid #0052cc;
+}
+
+
 .role-badge-developer {
     background: #e3fcef;
     color: #006644;

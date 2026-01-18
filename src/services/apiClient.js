@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 const FRONTEND_PORT = 5173;
-const BACKEND_PORT = 8000;
-const BACKEND_URL = `http://localhost:${BACKEND_PORT}`;
+export const BACKEND_PORT = 8000;
+export const API_PREFIX = '/api';
+export const BACKEND_URL = `http://127.0.0.1:${BACKEND_PORT}`;
 
 const api = axios.create({
-    baseURL: BACKEND_URL,
+    baseURL: API_PREFIX,
     headers: {
         'Content-Type': 'application/json',
     },

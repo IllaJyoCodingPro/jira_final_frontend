@@ -24,6 +24,7 @@ import ListView from './features/issues/ListView';
 import TeamsPage from './features/project/TeamsPage';
 import TeamDetailsPage from './features/project/TeamDetailsPage';
 import IssueDetailPage from './features/issues/IssueDetailPage';
+import RecentActivityPage from './features/issues/RecentActivityPage';
 import UserManagement from './features/admin/UserManagement';
 import GlobalToast from './components/common/GlobalToast';
 import GlobalModalContainer from './components/common/GlobalModalContainer';
@@ -52,7 +53,7 @@ const PublicRoute = ({ children }) => {
   }
 
   if (user) {
-    return <Navigate to="/projects" replace />;
+    return <Navigate to="/my-work" replace />;
   }
 
   return children;
@@ -95,6 +96,7 @@ const App = () => {
               <Route path="/dashboard" element={<DashboardRedirect />} />
               <Route path="/projects" element={<ProjectList />} />
               <Route path="/my-work" element={<YourWork />} />
+              <Route path="/activity" element={<RecentActivityPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/notifications" element={<NotificationsPage />} />
@@ -109,6 +111,7 @@ const App = () => {
               <Route path="/projects/:projectId/reports" element={<Reports />} />
               <Route path="/projects/:projectId/issues" element={<Issues />} />
               <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetailPage />} />
+              <Route path="/projects/:projectId/activity" element={<RecentActivityPage />} />
               <Route path="/projects/:projectId/settings" element={<ProjectSettings />} />
               <Route path="/projects/:projectId/teams" element={<TeamsPage />} />
               <Route path="/projects/:projectId/teams/:teamId" element={<TeamDetailsPage />} />
