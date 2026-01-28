@@ -6,6 +6,7 @@ import ChangeRoleModal from './ChangeRoleModal';
 import AdminProjects from './AdminProjects';
 import ModeSwitchResponses from './ModeSwitchResponses';
 import { ROLES } from '../../constants';
+import { getImageUrl } from '../../utils/renderUtils';
 import './UserManagement.css';
 
 const UserManagement = () => {
@@ -155,7 +156,7 @@ const UserManagement = () => {
                                                 <div className="user-cell">
                                                     <div className="user-avatar">
                                                         {user.profile_pic ? (
-                                                            <img src={`/api${user.profile_pic}`} alt="" />
+                                                            <img src={getImageUrl(user.profile_pic)} alt="" />
                                                         ) : (
                                                             user.username.charAt(0).toUpperCase()
                                                         )}

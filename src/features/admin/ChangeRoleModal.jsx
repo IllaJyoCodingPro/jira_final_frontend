@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Shield, ShieldAlert, ShieldCheck, Check } from 'lucide-react';
+import { X, Shield, ShieldAlert, ShieldCheck, Check, AlertTriangle } from 'lucide-react';
 import { ROLES } from '../../constants';
 import { authService } from '../../services/authService';
 import './ChangeRoleModal.css';

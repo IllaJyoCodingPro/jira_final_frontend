@@ -32,3 +32,14 @@ export const formatError = (error) => {
 export const logError = (context, error) => {
     console.error(`[${context}] Error:`, error);
 };
+
+/**
+ * Standardized image URL builder.
+ * Handles missing slash for local API images.
+ */
+export const getImageUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `/api${cleanPath}`;
+};

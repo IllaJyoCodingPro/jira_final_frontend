@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { ROLES } from '../../constants';
 import { Camera, Edit2, Save, X, Loader2, User } from 'lucide-react';
-import { formatError } from '../../utils/renderUtils';
+import { formatError, getImageUrl } from '../../utils/renderUtils';
 import ModeSwitchRequestModal from './ModeSwitchRequestModal';
 import './ProfilePage.css';
 
@@ -180,7 +180,7 @@ const ProfilePage = () => {
                             <div className="profile-edit-avatar-section">
                                 <div className="profile-avatar-large editable" onClick={handleAvatarClick}>
                                     {user.profile_pic ? (
-                                        <img src={`/api${user.profile_pic}`} alt="" className="avatar-img-large" />
+                                        <img src={getImageUrl(user.profile_pic)} alt="" className="avatar-img-large" />
                                     ) : (
                                         <div className="avatar-placeholder-large">
                                             {user.username.charAt(0).toUpperCase()}
@@ -327,7 +327,7 @@ const ProfilePage = () => {
                                                 onClick={() => setIsEditing(true)}
                                             >
                                                 {user.profile_pic ? (
-                                                    <img src={`/api${user.profile_pic}`} alt="" className="avatar-img-large" />
+                                                    <img src={getImageUrl(user.profile_pic)} alt="" className="avatar-img-large" />
                                                 ) : (
                                                     <div className="avatar-placeholder-large">
                                                         {user.username.charAt(0).toUpperCase()}

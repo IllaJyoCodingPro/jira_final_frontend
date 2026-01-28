@@ -103,7 +103,7 @@ const AdminDashboard = () => {
                         </select>
                     </div>
                     <div className="chart-wrapper">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height={250}>
                             <BarChart data={summary?.weekly_stats || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f5f7" />
                                 <XAxis
