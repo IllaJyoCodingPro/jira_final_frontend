@@ -71,6 +71,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        if (error) setError(null);
     };
 
     const handleAssigneeChange = (e) => {
@@ -91,6 +92,14 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
         if (!canEdit) {
             alert("You do not have permission to edit this issue.");
             return;
+        }
+
+        // Date validation
+        if (formData.start_date && formData.end_date) {
+            if (new Date(formData.end_date) < new Date(formData.start_date)) {
+                setError("End date cannot be earlier than start date.");
+                return;
+            }
         }
 
         setIsLoading(true);

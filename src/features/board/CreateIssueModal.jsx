@@ -148,6 +148,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (error) setError(null);
   };
 
   const handleFileChange = e => setFile(e.target.files[0]);
@@ -219,6 +220,14 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     setError(null);
 
     try {
+      if (formData.start_date && formData.end_date) {
+        if (new Date(formData.end_date) < new Date(formData.start_date)) {
+          setError("End date cannot be earlier than start date");
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const assigned_to_value = (typeof formData.assignee_id === 'number' && !Number.isNaN(formData.assignee_id))
         ? formData.assignee_id
         : (formData.assignee_id ? parseInt(formData.assignee_id, 10) : null);

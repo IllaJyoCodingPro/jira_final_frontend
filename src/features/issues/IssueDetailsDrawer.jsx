@@ -65,11 +65,23 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         setIsDirty(true);
+        setError(null);
     };
+
+    const [error, setError] = useState(null);
 
     const handleSave = async () => {
         setIsLoading(true);
+        setError(null);
         try {
+            if (formData.start_date && formData.end_date) {
+                if (new Date(formData.end_date) < new Date(formData.start_date)) {
+                    setError("End date cannot be earlier than start date.");
+                    setIsLoading(false);
+                    return;
+                }
+            }
+            
             // Merge original issue with form data, excluding complex objects like 'project' if needed,
             // but FormData in api.js will stringify them. 
             // Better to only send scalar fields from issue that might be missing in formData.
@@ -306,6 +318,8 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                             </div>
                         </div>
                     </div>
+
+                    {error && <div style={{ color: '#de350b', padding: '10px', marginBottom: '10px', backgroundColor: '#ffebe6', borderRadius: '3px', fontSize: '12px' }}>{error}</div>}
 
                     <div className="sidebar-actions">
                         <button

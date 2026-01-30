@@ -33,22 +33,26 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated, onCreateTeam })
             // Updated to pass 4 arguments
             const newProject = await projectService.create(name, prefix);
             onProjectCreated();
-            // Instead of closing, show success state to prompt for team creation
-            setCreatedProject(newProject);
-
-            // Reset form fields
-            setName('');
-            setPrefix('');
+            
+            // Close modal immediately on success
+            handleClose();
 
         } catch (err) {
-            const detail = err.response?.data?.detail;
-            if (Array.isArray(detail)) {
+            const data = err.response?.data;
+            const detail = data?.detail;
+            const message = data?.message;
+            const status = err.response?.status;
+            
+            if (status === 500) {
+                // Assuming 500 is due to unique constraint violation (duplicate name)
+                setError("Project name already exists");
+            } else if (Array.isArray(detail)) {
                 // Handle Pydantic validation errors
                 setError(detail.map(e => `${e.loc.join('.')}: ${e.msg}`).join(', '));
             } else if (typeof detail === 'object') {
                 setError(JSON.stringify(detail));
             } else {
-                setError(detail || 'Failed to create project');
+                setError(message || detail || 'Failed to create project');
             }
         } finally {
             setIsLoading(false);

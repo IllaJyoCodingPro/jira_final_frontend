@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import kietLogo from '../../assets/kiet-logo.png';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -10,10 +11,8 @@ const LandingPage = () => {
             {/* Navbar */}
             <nav className="landing-nav">
                 <div className="landing-logo-container">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M11.2 4H4V13.8C4 16.7823 6.41766 19.2 9.4 19.2C10.3941 19.2 11.2 18.3941 11.2 17.4V4ZM19.2 4H12V11.2H19.2V4ZM19.2 12H12V17.4C12 18.3941 12.8059 19.2 13.8 19.2C16.7823 19.2 19.2 16.7823 19.2 13.8V12Z" fill="#0052CC" />
-                    </svg>
-                    <span className="landing-logo-text">Jira</span>
+                    <img src={kietLogo} alt="KIET" style={{ height: '28px', marginRight: '8px' }} />
+                    <span className="landing-logo-text">KIET Jira</span>
                 </div>
                 <div className="landing-nav-links">
                     <button className="landing-login-btn" onClick={() => navigate("/login")}>Log In</button>
