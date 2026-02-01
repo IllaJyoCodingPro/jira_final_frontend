@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { storyService } from '../../services/storyService';
 import { projectService } from '../../services/projectService';
-import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
 import IssueDetailsDrawer from '../issues/IssueDetailsDrawer';
 import './Calendar.css';
 
@@ -136,8 +135,8 @@ const Calendar = () => {
         return issues.filter(issue => {
             const matchesAssignee = assigneeFilter === 'All' || issue.assignee === assigneeFilter;
             const matchesStatus = statusFilter === 'All' || issue.status === statusFilter;
-            const matchesPriority = priorityFilter === 'All' || (issue.priority || ISSUE_PRIORITY.MEDIUM) === priorityFilter;
-            const matchesType = typeFilter === 'All' || (issue.issue_type || ISSUE_TYPES.TASK) === typeFilter;
+            const matchesPriority = priorityFilter === 'All' || (issue.priority || 'Medium') === priorityFilter;
+            const matchesType = typeFilter === 'All' || (issue.issue_type || 'Task') === typeFilter;
             const matchesSearch = issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (issue.story_pointer && issue.story_pointer.toLowerCase().includes(searchQuery.toLowerCase()));
             return matchesAssignee && matchesStatus && matchesPriority && matchesType && matchesSearch && (issue.start_date || issue.end_date);
@@ -239,13 +238,10 @@ const Calendar = () => {
     };
 
     const getStatusColor = (status) => {
-        switch (status?.toString().toUpperCase()) {
-            case ISSUE_STATUS.DONE.toUpperCase(): return '#36b37e';
-            case ISSUE_STATUS.IN_PROGRESS.toUpperCase().replace(/\s+/g, ''):
-            case ISSUE_STATUS.IN_PROGRESS.toUpperCase(): return '#0052cc';
-            case ISSUE_STATUS.TODO.toUpperCase().replace(/\s+/g, ''):
-            case ISSUE_STATUS.TODO.toUpperCase():
-            default: return '#42526e';
+        switch (status?.toLowerCase()) {
+            case 'done': return '#36b37e';
+            case 'in progress': return '#0052cc';
+            case 'to do': default: return '#42526e';
         }
     };
 
@@ -324,14 +320,14 @@ const Calendar = () => {
                         <label><ChevronDown size={14} /> Priority</label>
                         <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
                             <option value="All">All Priorities</option>
-                            {[ISSUE_PRIORITY.HIGH, ISSUE_PRIORITY.MEDIUM, ISSUE_PRIORITY.LOW].map(p => <option key={p} value={p}>{p}</option>)}
+                            {['High', 'Medium', 'Low'].map(p => <option key={p} value={p}>{p}</option>)}
                         </select>
                     </div>
                     <div className="filter-item">
                         <label><ChevronDown size={14} /> Type</label>
                         <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
                             <option value="All">All Types</option>
-                            {[ISSUE_TYPES.STORY, ISSUE_TYPES.TASK, ISSUE_TYPES.BUG].map(t => <option key={t} value={t}>{t}</option>)}
+                            {['Story', 'Task', 'Bug'].map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
                     </div>
                 </div>
@@ -387,7 +383,7 @@ const Calendar = () => {
                                                 >
                                                     <span className="issue-key">{issue.story_pointer}</span>
                                                     <span className="issue-summary">{issue.title}</span>
-                                                    {issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase() && <Check size={12} className="done-icon" />}
+                                                    {issue.status?.toLowerCase() === 'done' && <Check size={12} className="done-icon" />}
                                                 </div>
                                             ))}
                                             {dayIssues.length > maxVisibleIssues && (

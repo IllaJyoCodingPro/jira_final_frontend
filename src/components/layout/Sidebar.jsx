@@ -110,10 +110,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
                             <Calendar size={20} />
                             {!isCollapsed && <span>Calendar</span>}
                         </NavLink>
-                        <NavLink to={`/projects/${projectId}/reports`} title="Reports" className={({ isActive }) => `jira-nav-item ${isActive ? 'active' : ''}`}>
-                            <BarChart2 size={20} />
-                            {!isCollapsed && <span>Reports</span>}
-                        </NavLink>
                         <NavLink to={`/projects/${projectId}/teams`} title="Teams" className={({ isActive }) => `jira-nav-item ${isActive ? 'active' : ''}`}>
                             <Users size={20} />
                             {!isCollapsed && <span>Teams</span>}

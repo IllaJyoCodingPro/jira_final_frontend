@@ -11,7 +11,15 @@ import {
     Clock,
     Zap,
     Plus,
-    Activity
+    Activity,
+    BarChart2,
+    TrendingUp,
+    AlertCircle,
+    CheckCircle2,
+    ChevronUp,
+    ChevronDown,
+    Minus,
+    PieChart
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { projectService } from '../../services/projectService';
@@ -19,6 +27,7 @@ import { storyService } from '../../services/storyService';
 import { statsService } from '../../services/statsService';
 import { formatRelativeTime } from '../../utils/dateUtils'; // Shared date formatting
 import { logError } from '../../utils/renderUtils'; // Standardized logging
+import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
 import './ProjectSummary.css';
 
 const ProjectSummary = () => {
@@ -52,9 +61,27 @@ const ProjectSummary = () => {
 
     const stats = useMemo(() => {
         const total = issues.length;
-        const done = issues.filter(i => i.status?.toLowerCase() === 'done').length;
+        const normalize = (s) => (s ? s.toString().toLowerCase().replace(/[_\s-]+/g, '') : '');
+
+        const done = issues.filter(i => normalize(i.status) === normalize(ISSUE_STATUS.DONE)).length;
+        const inProgress = issues.filter(i => normalize(i.status) === normalize(ISSUE_STATUS.IN_PROGRESS)).length;
+        const todo = issues.filter(i => !i.status || normalize(i.status) === normalize(ISSUE_STATUS.TODO)).length;
+
         const percent = total > 0 ? Math.round((done / total) * 100) : 0;
-        return { total, done, percent };
+
+        const typeCount = issues.reduce((acc, i) => {
+            const type = i.issue_type || ISSUE_TYPES.STORY;
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+        }, {});
+
+        const priorityCount = issues.reduce((acc, i) => {
+            const priority = i.priority || ISSUE_PRIORITY.MEDIUM;
+            acc[priority] = (acc[priority] || 0) + 1;
+            return acc;
+        }, {});
+
+        return { total, done, inProgress, todo, percent, typeCount, priorityCount };
     }, [issues]);
 
     const handleIssueClick = (issueId) => {
@@ -82,6 +109,37 @@ const ProjectSummary = () => {
                 </div>
             </header>
 
+            <div className="stats-grid-modern animate-fade-in">
+                <div className="stat-card-v2 glass-subtle">
+                    <div className="stat-icon-v2 todo"><Clock size={20} /></div>
+                    <div className="stat-info">
+                        <span className="stat-label">To Do</span>
+                        <span className="stat-value">{stats.todo}</span>
+                    </div>
+                </div>
+                <div className="stat-card-v2 glass-subtle">
+                    <div className="stat-icon-v2 progress"><TrendingUp size={20} /></div>
+                    <div className="stat-info">
+                        <span className="stat-label">In Progress</span>
+                        <span className="stat-value">{stats.inProgress}</span>
+                    </div>
+                </div>
+                <div className="stat-card-v2 glass-subtle">
+                    <div className="stat-icon-v2 done"><CheckCircle2 size={20} /></div>
+                    <div className="stat-info">
+                        <span className="stat-label">Completed</span>
+                        <span className="stat-value">{stats.done}</span>
+                    </div>
+                </div>
+                <div className="stat-card-v2 glass-subtle">
+                    <div className="stat-icon-v2 total"><AlertCircle size={20} /></div>
+                    <div className="stat-info">
+                        <span className="stat-label">Total Issues</span>
+                        <span className="stat-value">{stats.total}</span>
+                    </div>
+                </div>
+            </div>
+
             <div className="summary-grid">
                 <div className="summary-main">
                     <div className="quick-actions-row">
@@ -95,7 +153,8 @@ const ProjectSummary = () => {
                         </Link>
                     </div>
 
-                    <section className="summary-section glass stats-container-new">
+                    {/* 1. PROJECT HEALTH (Top of main area) */}
+                    <section className="summary-section glass stats-container-new full-width-health">
                         <div className="section-header">
                             <h2>Project Health</h2>
                             <div className="health-badge good">On Track</div>
@@ -125,46 +184,89 @@ const ProjectSummary = () => {
                         </div>
                     </section>
 
-                    <section className="summary-section glass">
-                        <div className="section-header">
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <Activity size={20} color="#0052cc" />
-                                <h2>Recent Activity</h2>
+                    {/* 2. ISSUE TYPE DISTRIBUTION & RECENT ACTIVITY (Side-by-side) */}
+                    <div className="distribution-activity-row">
+                        <section className="summary-section glass chart-section-compact">
+                            <div className="section-header">
+                                <h2>Issue Types</h2>
+                                <span className="section-subtitle">Breakdown</span>
                             </div>
-                            <Link to={`/projects/${projectId}/activity`} className="section-link">
-                                View all <ArrowRight size={14} />
-                            </Link>
-                        </div>
-                        <div className="recent-list-modern">
-                            {recentActivity.length > 0 ? (
-                                recentActivity.slice(0, 5).map((activity, idx) => (
-                                    <div key={idx} className="summary-activity-item" onClick={() => handleIssueClick(activity.issue.id)}>
-                                        <div className="activity-meta">
-                                            <div>
-                                                <span className="activity-user">{activity.actor.username}</span>
-                                                <span className="activity-action">{activity.action.toLowerCase()}</span>
-                                                an issue
-                                            </div>
-                                            <span>{formatRelativeTime(activity.created_at)}</span> {/* Shared date formatting */}
-                                        </div>
-
-                                        <div className="activity-title">
-                                            <span style={{ color: '#0052cc', marginRight: '8px' }}>{activity.issue.key}</span>
-                                            {activity.issue.title}
-                                        </div>
-
-                                        <div className="activity-desc">
-                                            {activity.changes.replace(/<[^>]*>/g, '').substring(0, 100)}...
-                                        </div>
+                            <div className="distribution-content compact">
+                                <div className="donut-wrapper-v2 small">
+                                    <svg viewBox="0 0 100 100" className="donut-svg">
+                                        <circle cx="50" cy="50" r="42" fill="none" stroke="#f4f5f7" strokeWidth="10" />
+                                        {Object.entries(stats.typeCount).map(([type, count], idx, arr) => {
+                                            let offset = 0;
+                                            for (let i = 0; i < idx; i++) offset += (arr[i][1] / stats.total) * 100;
+                                            const percent = (count / stats.total) * 100;
+                                            const colors = ['#0052cc', '#36b37e', '#ffab00', '#ff5630', '#6554c0'];
+                                            return (
+                                                <circle
+                                                    key={type}
+                                                    cx="50" cy="50" r="42"
+                                                    fill="transparent"
+                                                    stroke={colors[idx % colors.length]}
+                                                    strokeWidth="10"
+                                                    strokeDasharray={`${percent} ${100 - percent}`}
+                                                    strokeDashoffset={-offset}
+                                                    strokeLinecap="round"
+                                                    transform="rotate(-90 50 50)"
+                                                    className="donut-segment"
+                                                />
+                                            );
+                                        })}
+                                    </svg>
+                                    <div className="donut-center">
+                                        <span className="total-num small">{stats.total}</span>
+                                        <span className="total-label small">Issues</span>
                                     </div>
-                                ))
-                            ) : (
-                                <div style={{ textAlign: 'center', padding: '40px', color: '#6b778c' }}>
-                                    <p>No recent activity found in this project.</p>
                                 </div>
-                            )}
-                        </div>
-                    </section>
+                                <div className="chart-legend-v2 vertical">
+                                    {Object.entries(stats.typeCount).map(([type, count], idx) => (
+                                        <div key={type} className="legend-item-v3">
+                                            <span className="dot" style={{ background: ['#0052cc', '#36b37e', '#ffab00', '#ff5630', '#6554c0'][idx % 5] }}></span>
+                                            <div className="legend-info">
+                                                <span className="label">{type}</span>
+                                                <span className="percent">{Math.round((count / stats.total) * 100)}%</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="summary-section glass activity-section-compact">
+                            <div className="section-header">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <Activity size={20} color="#0052cc" />
+                                    <h2>Activity</h2>
+                                </div>
+                                <Link to={`/projects/${projectId}/activity`} className="section-link">
+                                    <ArrowRight size={14} />
+                                </Link>
+                            </div>
+                            <div className="recent-list-modern">
+                                {recentActivity.length > 0 ? (
+                                    recentActivity.slice(0, 3).map((activity, idx) => (
+                                        <div key={idx} className="summary-activity-item compact" onClick={() => handleIssueClick(activity.issue.id)}>
+                                            <div className="activity-meta">
+                                                <span className="activity-user">{activity.actor.username}</span>
+                                                <span>{formatRelativeTime(activity.created_at)}</span>
+                                            </div>
+                                            <div className="activity-title">
+                                                <span style={{ color: '#0052cc', marginRight: '4px', fontSize: '11px' }}>{activity.issue.key}</span>
+                                                {activity.issue.title.substring(0, 30)}...
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="no-activity-small" style={{ textAlign: 'center', padding: '20px', color: '#6b778c', fontSize: '13px' }}>
+                                        No recent activity.
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    </div>
                 </div>
 
                 <div className="summary-sidebar">
@@ -214,10 +316,29 @@ const ProjectSummary = () => {
                                 <Layout size={16} />
                                 <span>Project Roadmap</span>
                             </Link>
-                            <Link to={`/projects/${projectId}/reports`} className="quick-link-item">
-                                <FileText size={16} />
-                                <span>Health Reports</span>
-                            </Link>
+                        </div>
+                    </section>
+
+                    {/* 3. PRIORITY DISTRIBUTION (Sidebar) */}
+                    <section className="summary-section glass sidebar-section priority-sidebar-section">
+                        <h3>Priority Distribution</h3>
+                        <div className="priority-list-sidebar">
+                            {[ISSUE_PRIORITY.HIGH, ISSUE_PRIORITY.MEDIUM, ISSUE_PRIORITY.LOW].map((p) => {
+                                const count = stats.priorityCount[p] || 0;
+                                const percent = stats.total > 0 ? (count / stats.total) * 100 : 0;
+                                return (
+                                    <div key={p} className={`priority-item-sidebar p-${p.toLowerCase()}`}>
+                                        <div className="p-header-sidebar">
+                                            <span className="p-dot"></span>
+                                            <span className="p-label">{p}</span>
+                                            <span className="p-count-sidebar">{count}</span>
+                                        </div>
+                                        <div className="p-progress-sidebar">
+                                            <div className="p-fill-sidebar" style={{ width: `${percent}%` }}></div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </section>
                 </div>

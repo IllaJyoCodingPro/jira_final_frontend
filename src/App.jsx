@@ -15,7 +15,6 @@ import Calendar from './features/calendar/Calendar'; // Add this
 import ActiveSprints from './features/board/ActiveSprints'; // Add this
 import Timeline from './features/timeline/Timeline';
 import NotificationsPage from './features/notifications/NotificationsPage';
-import Reports from './features/reports/Reports';
 import Issues from './features/issues/Issues';
 import YourWork from './features/issues/YourWork';
 import ProjectSettings from './features/project/ProjectSettings';
@@ -108,7 +107,6 @@ const App = () => {
               <Route path="/projects/:projectId/active-sprints" element={<ActiveSprints />} />
               <Route path="/projects/:projectId/calendar" element={<Calendar />} />
               <Route path="/projects/:projectId/timeline" element={<Timeline />} />
-              <Route path="/projects/:projectId/reports" element={<Reports />} />
               <Route path="/projects/:projectId/issues" element={<Issues />} />
               <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetailPage />} />
               <Route path="/projects/:projectId/activity" element={<RecentActivityPage />} />
