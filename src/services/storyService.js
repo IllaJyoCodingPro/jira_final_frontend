@@ -20,7 +20,10 @@ export const storyService = {
     create: async (storyData) => {
         const formData = new FormData();
         Object.keys(storyData).forEach((key) => {
-            if (storyData[key] !== null && storyData[key] !== undefined) {
+            // Explicitly send epic_id even if null to prevent backend defaults
+            if (key === 'epic_id') {
+                formData.append(key, storyData[key] === null ? '' : storyData[key]);
+            } else if (storyData[key] !== null && storyData[key] !== undefined) {
                 formData.append(key, storyData[key]);
             }
         });

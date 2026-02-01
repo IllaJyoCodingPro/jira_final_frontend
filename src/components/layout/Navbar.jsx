@@ -9,6 +9,7 @@ import {
     Settings
 
 } from 'lucide-react';
+import { getImageUrl } from '../../utils/renderUtils';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button';
 import { projectService } from '../../services/projectService';
@@ -274,7 +275,7 @@ const Navbar = ({ onCreateClick }) => {
                     >
                         <div className="jira-avatar" title="View Profile">
                             {user?.profile_pic ? (
-                                <img src={`/api${user.profile_pic}`} alt="" className="avatar-img-navbar" />
+                                <img src={getImageUrl(user.profile_pic)} alt="" className="avatar-img-navbar" />
                             ) : (
                                 user?.username?.charAt(0).toUpperCase() || <User size={16} />
                             )}
@@ -288,7 +289,7 @@ const Navbar = ({ onCreateClick }) => {
                                 <div className="jira-dropdown-user-info">
                                     <div className="jira-avatar-large">
                                         {user?.profile_pic ? (
-                                            <img src={`/api${user.profile_pic}`} alt="" className="avatar-img-navbar" />
+                                            <img src={getImageUrl(user.profile_pic)} alt="" className="avatar-img-navbar" />
                                         ) : (
                                             user?.username?.charAt(0).toUpperCase()
                                         )}

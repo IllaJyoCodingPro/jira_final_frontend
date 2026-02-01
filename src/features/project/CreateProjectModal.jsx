@@ -32,8 +32,8 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated, onCreateTeam })
         try {
             // Updated to pass 4 arguments
             const newProject = await projectService.create(name, prefix);
-            onProjectCreated();
-            
+            onProjectCreated(newProject); // Pass the created project
+
             // Close modal immediately on success
             handleClose();
 
@@ -42,7 +42,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated, onCreateTeam })
             const detail = data?.detail;
             const message = data?.message;
             const status = err.response?.status;
-            
+
             if (status === 500) {
                 // Assuming 500 is due to unique constraint violation (duplicate name)
                 setError("Project name already exists");

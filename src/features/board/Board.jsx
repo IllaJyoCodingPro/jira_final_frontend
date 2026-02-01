@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { storyService } from '../../services/storyService';
+import { epicService } from '../../services/epicService';
 import { projectService } from '../../services/projectService';
 import { teamService } from '../../services/teamService';
 import { useAuth } from '../../context/AuthContext';
 import BoardColumn from './BoardColumn';
 import CreateIssueModal from './CreateIssueModal';
 import { usePermissions } from '../../hooks/usePermissions';
-import { Search, Plus, Kanban } from 'lucide-react';
+import { Search, Plus, Kanban, Filter } from 'lucide-react';
 import { ISSUE_STATUS, ISSUE_TYPES } from '../../constants';
 import './Board.css';
 
@@ -27,6 +28,9 @@ const Board = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
     const [issues, setIssues] = useState([]);
+    const [epics, setEpics] = useState([]);
+    const [selectedEpicId, setSelectedEpicId] = useState(null);
+
     const [selectedType, setSelectedType] = useState('All');
     const [selectedTeam, setSelectedTeam] = useState('All');
     const [teams, setTeams] = useState([]);
@@ -47,11 +51,28 @@ const Board = () => {
     const fetchIssues = async () => {
         try {
             const data = await storyService.getByProject(projectId);
+            console.log('=== API Response ===');
+            console.log('Total issues from API:', data.length);
+            console.log('Sample issue:', data[0]);
+            data.forEach(issue => {
+                console.log(`Issue "${issue.title}": epic_id = "${issue.epic_id}" (type: ${typeof issue.epic_id}, is null: ${issue.epic_id === null}, is empty: ${issue.epic_id === ''})`);
+            });
             setIssues(data);
         } catch (error) {
             console.error("Failed to fetch issues", error);
         }
     };
+
+    const fetchEpics = async () => {
+        try {
+            const data = await epicService.getByProject(projectId);
+            const epicsList = Array.isArray(data) ? data : [];
+            setEpics(epicsList);
+            // Don't auto-select any epic - show all issues by default
+        } catch (error) {
+            console.error("Failed to fetch epics", error);
+        }
+    }
 
     const fetchProject = async () => {
         try {
@@ -66,6 +87,7 @@ const Board = () => {
     useEffect(() => {
         if (projectId) {
             fetchIssues();
+            fetchEpics();
             fetchProject();
             storyService.getIssueTypes()
                 .then(data => setIssueTypes(Array.isArray(data) ? data : []))
@@ -84,28 +106,43 @@ const Board = () => {
 
         const teamMatch = selectedTeam === 'All' || String(issue.team_id) === String(selectedTeam);
 
-        return queryMatch && typeMatch && teamMatch;
+        // Filter by selected Epic (if any)
+        let epicMatch = true;
+        if (selectedEpicId === 'NO_EPIC') {
+            // Match issues explicitly WITHOUT an epic (null, undefined, or empty string)
+            epicMatch = !issue.epic_id || issue.epic_id === '';
+        } else if (selectedEpicId) {
+            // Match issues with specific epic
+            epicMatch = String(issue.epic_id) === String(selectedEpicId);
+        }
+        // When selectedEpicId is null, epicMatch stays true (show all issues)
+
+        return queryMatch && typeMatch && teamMatch && epicMatch;
     };
-
-    // Separate Epics and standard issues, applying filters to BOTH
-    const epics = issues.filter(i =>
-        (i.issue_type || '').toUpperCase() === ISSUE_TYPES.EPIC.toUpperCase() && isMatch(i)
-    );
-
-    const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== ISSUE_TYPES.EPIC.toUpperCase());
 
     // Filter tasks for the board
     const getFilteredTasks = () => {
         const grouped = {};
         COLUMNS.forEach(col => grouped[col] = []);
 
-        tasks.forEach(issue => {
-            const normalized = normalizeStatus(issue.status);
-
-            if (isMatch(issue)) {
-                grouped[normalized].push(issue);
-            }
+        const filteredIssues = issues.filter(issue => {
+            // Ignore if it's an Epic itself
+            if (issue.issue_type === ISSUE_TYPES.EPIC) return false;
+            return isMatch(issue);
         });
+
+        console.log('=== Filtering Results ===');
+        console.log('Total issues:', issues.length);
+        console.log('Filtered issues:', filteredIssues.length);
+        console.log('Selected epic ID:', selectedEpicId);
+        console.log('Filtered issues data:', filteredIssues.map(i => ({ title: i.title, status: i.status, epic_id: i.epic_id })));
+
+        filteredIssues.forEach(issue => {
+            const normalized = normalizeStatus(issue.status);
+            grouped[normalized].push(issue);
+        });
+
+        console.log('Grouped by status:', Object.keys(grouped).map(k => ({ status: k, count: grouped[k].length })));
         return grouped;
     };
 
@@ -141,6 +178,17 @@ const Board = () => {
         }
     };
 
+    const handleEpicClick = (epicId) => {
+        if (selectedEpicId === epicId) {
+            setSelectedEpicId(null); // Deselect
+        } else {
+            setSelectedEpicId(epicId);
+        }
+    };
+
+    // Filter allowed issue types for display
+    const allowedTypes = issueTypes.filter(t => !['Epic', 'Task', 'Sub-task'].includes(t));
+
     return (
         <div className="jira-board-container">
             <header className="jira-board-header glass">
@@ -167,7 +215,7 @@ const Board = () => {
                                 className="jira-select"
                             >
                                 <option value="All">All Types</option>
-                                {issueTypes.map(type => (
+                                {allowedTypes.map(type => (
                                     <option key={type} value={type}>{type}</option>
                                 ))}
                             </select>
@@ -183,10 +231,32 @@ const Board = () => {
                                 ))}
                             </select>
 
-                            {(selectedType !== 'All' || selectedTeam !== 'All' || searchQuery) && (
+                            <select
+                                value={selectedEpicId || 'ALL'}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === 'ALL') {
+                                        setSelectedEpicId(null);
+                                    } else if (value === 'NO_EPIC') {
+                                        setSelectedEpicId('NO_EPIC');
+                                    } else {
+                                        // Parse to number for proper comparison
+                                        setSelectedEpicId(parseInt(value));
+                                    }
+                                }}
+                                className="jira-select"
+                            >
+                                <option value="ALL">All Epics</option>
+                                <option value="NO_EPIC">No Epic</option>
+                                {epics.map(epic => (
+                                    <option key={epic.id} value={epic.id}>{epic.title}</option>
+                                ))}
+                            </select>
+
+                            {(selectedType !== 'All' || selectedTeam !== 'All' || searchQuery || selectedEpicId) && (
                                 <button
                                     className="btn-clear-filters"
-                                    onClick={() => { setSelectedType('All'); setSelectedTeam('All'); setSearchQuery(''); }}
+                                    onClick={() => { setSelectedType('All'); setSelectedTeam('All'); setSearchQuery(''); setSelectedEpicId(null); }}
                                     style={{
                                         background: 'none',
                                         border: 'none',
@@ -227,12 +297,20 @@ const Board = () => {
                     </div>
                     <div className="epics-panel-list">
                         {epics.length === 0 ? (
-                            <div className="no-epics-placeholder">No epics created yet.</div>
+                            <div className="no-epics-placeholder" style={{ padding: '12px', fontSize: '13px', color: '#6b778c', textAlign: 'center' }}>
+                                No epics created yet.
+                            </div>
                         ) : (
                             epics.map(epic => (
-                                <div key={epic.id} className="epic-panel-card" onClick={() => navigate(`/projects/${projectId}/issues/${epic.id}`)}>
+                                <div
+                                    key={epic.id}
+                                    className={`epic-panel-card ${selectedEpicId === epic.id ? 'active' : ''}`}
+                                    onClick={() => handleEpicClick(epic.id)}
+                                >
                                     <div className="epic-card-top">
-                                        <span className="epic-card-key">{epic.story_pointer || epic.title.substring(0, 3).toUpperCase()}</span>
+                                        <span className="epic-card-key" style={{ background: selectedEpicId === epic.id ? '#fff' : undefined }}>
+                                            EPIC
+                                        </span>
                                     </div>
                                     <div className="epic-card-title">{epic.title}</div>
                                 </div>
@@ -266,6 +344,7 @@ const Board = () => {
                 projectId={projectId}
                 onIssueCreated={() => {
                     fetchIssues();
+                    fetchEpics(); // Also refresh epics if one was just created
                 }}
             />
         </div>

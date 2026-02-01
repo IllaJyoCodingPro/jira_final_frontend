@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   X, Minus, Maximize2, Minimize2,
   CheckSquare, Bookmark, AlertCircle,
@@ -7,6 +7,7 @@ import {
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import { storyService } from '../../services/storyService';
+import { epicService } from '../../services/epicService';
 import { authService } from '../../services/authService';
 import { teamService } from '../../services/teamService';
 import { syncTeamMembership } from '../../utils/teamUtils';
@@ -30,7 +31,9 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     start_date: '',
     end_date: '',
     parent_issue_id: '',
-    team_id: ''
+    epic_id: '', // New field for linking to Epics
+    team_id: '',
+    team_ids: [] // New field for multiple teams (Epics)
   };
 
   const [formData, setFormData] = useState({ ...defaultState, ...initialData });
@@ -41,39 +44,51 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
+  const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
+
+  const teamDropdownRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (teamDropdownRef.current && !teamDropdownRef.current.contains(event.target)) {
+        setIsTeamDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [teamDropdownRef]);
 
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [createAnother, setCreateAnother] = useState(false);
   const [parentOptions, setParentOptions] = useState([]);
+  const [epics, setEpics] = useState([]); // Store epics for the dropdown
   const [fetchingParents, setFetchingParents] = useState(false);
-  const [globalEpics, setGlobalEpics] = useState([]); // [NEW] For global mode
-  const [isGlobalMode, setIsGlobalMode] = useState(false);
-
-  // Determine mode
-  useEffect(() => {
-    setIsGlobalMode(!projectId);
-  }, [projectId]);
 
   const activeProjectId = projectId ? parseInt(projectId) : null;
 
-  // [NEW] Fetch Parent Options / Global Epics
+  // Helper to check if current type is Epic
+  const isEpic = formData.issue_type === 'Epic' || formData.issue_type === ISSUE_TYPES.EPIC;
+
+  useEffect(() => {
+    if (isOpen && activeProjectId) {
+      // Fetch Epics for the project so they can be selected in "Epic Link"
+      epicService.getByProject(activeProjectId)
+        .then(data => setEpics(Array.isArray(data) ? data : []))
+        .catch(err => console.error("Failed to fetch epics", err));
+    }
+  }, [isOpen, activeProjectId]);
+
+  // Fetch Parent Options (for Sub-tasks or other hierarchy if needed)
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchParents = async () => {
       setFetchingParents(true);
       try {
-        // Case 1: Global Mode (Navbar) -> Fetch ALL Epics
-        if (isGlobalMode) {
-          const epics = await storyService.getAllEpics();
-          setGlobalEpics(epics);
-          // Also reset parent options for selector
-          setParentOptions(epics);
-        }
-        // Case 2: Project Mode (Board) -> Fetch Context Options
-        else if (activeProjectId && formData.issue_type) {
-          if (formData.issue_type === ISSUE_TYPES.EPIC) {
+        if (activeProjectId && formData.issue_type) {
+          if (isEpic) {
             setParentOptions([]); // Epic has no parent
           } else {
             const parents = await storyService.getAvailableParents(activeProjectId, formData.issue_type);
@@ -81,7 +96,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
           }
         }
       } catch (err) {
-        console.error("Failed to fetch parents/epics", err);
+        console.error("Failed to fetch parents", err);
         setParentOptions([]);
       } finally {
         setFetchingParents(false);
@@ -89,39 +104,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     };
 
     fetchParents();
-  }, [formData.issue_type, activeProjectId, isOpen, isGlobalMode]);
-
-  // [NEW] Handle Epic Selection in Global Mode to set context
-  const handleParentChange = async (e) => {
-    const parentId = e.target.value;
-
-    // Update form data first
-    setFormData(prev => ({ ...prev, parent_issue_id: parentId }));
-
-    // If in Global Mode, finding the parent (Epic) sets the Project Context
-    if (isGlobalMode && parentId) {
-      const selectedEpic = globalEpics.find(ep => String(ep.id) === parentId);
-      if (selectedEpic) {
-        console.log("Global Mode: Selected Epic", selectedEpic);
-        // Set implicit project ID
-        setFormData(prev => ({
-          ...prev,
-          parent_issue_id: parentId,
-          project_id: selectedEpic.project_id
-        }));
-
-        // Fetch Teams for this project
-        try {
-          const teamsData = await teamService.getByProject(selectedEpic.project_id);
-          setTeams(Array.isArray(teamsData) ? teamsData : []);
-        } catch (err) {
-          console.error("Failed to fetch teams for derived project", err);
-        }
-      }
-    } else {
-      handleChange(e);
-    }
-  };
+  }, [formData.issue_type, activeProjectId, isOpen, isEpic]);
 
 
   // Load initial data only once when modal opens
@@ -129,7 +112,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     if (isOpen && initialData && Object.keys(initialData).length > 0) {
       setFormData(prev => ({ ...prev, ...initialData }));
     }
-  }, [isOpen]); // Only run when isOpen changes
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -151,43 +134,25 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     if (error) setError(null);
   };
 
+  const handleMultiSelectChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setFormData(prev => ({ ...prev, team_ids: selectedOptions }));
+  };
+
   const handleFileChange = e => setFile(e.target.files[0]);
 
   // Determine permissions for the selected team
   const selectedTeam = teams.find(t => t.id == formData.team_id);
   const isTeamLead = (selectedTeam?.lead_id == user?.id) || (selectedTeam?.lead?.id == user?.id);
-
-  // Check if user is a lead of ANY team in this project (Project Lead)
   const isProjectLead = teams.some(t => (t.lead_id == user?.id) || (t.lead?.id == user?.id));
   const isAdmin = user?.view_mode === ROLES.ADMIN;
+  const canAssignOthers = isAdmin || isTeamLead || isProjectLead || isEpic; // Allow assignment for Epics freely or based on policy
 
-  // Logic: Allow assignment if Admin OR Team Lead OR Project Lead.
-  const canAssignOthers = isAdmin || isTeamLead || isProjectLead;
-
-  // Debug permissions
+  // Enforce self-assignment for non-leads when team is selected (Only for non-Epics)
   useEffect(() => {
-    // Only log if permissions are restrictive and user is present
-    if (user) {
-      console.log('[CreateIssueModal] Permission Check:', {
-        activeProjectId,
-        teamId: formData.team_id,
-        userId: user.id,
-        isTeamLead,
-        isProjectLead,
-        isAdmin,
-        canAssignOthers
-      });
-    }
-  }, [formData.team_id, isTeamLead, isProjectLead, isAdmin, user]);
-
-  // Enforce self-assignment for non-leads when team is selected
-  useEffect(() => {
-    if (!isOpen) return;
-
-    // If I'm not allowed to assign others, force assignee to myself
+    if (!isOpen || isEpic) return; // Don't enforce for Epics
     if (!canAssignOthers && user) {
       setFormData(prev => {
-        // Only update if not already set to self (to avoid infinite loop if user changes)
         if (prev.assignee_id !== user.id) {
           return {
             ...prev,
@@ -198,7 +163,35 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         return prev;
       });
     }
-  }, [formData.team_id, canAssignOthers, user, isOpen, isProjectLead]);
+  }, [formData.team_id, canAssignOthers, user, isOpen, isEpic]);
+
+
+  // --- FILTERED ASSIGNEES LOGIC ---
+  const availableAssignees = useMemo(() => {
+    // 1. If Epic and team_ids selected: Filter users in those teams
+    if (isEpic && formData.team_ids && formData.team_ids.length > 0) {
+      const selectedTeamIds = formData.team_ids.map(id => String(id));
+      return users.filter(u => {
+        // Check if user is in any of the selected teams
+        // Assumption: team objects have a `members` array with user objects or IDs
+        // If `members` is not available on the list endpoint, we might default to all users or need to fetch details.
+
+        // Let's try to find the team in `teams` and check members.
+        const userTeams = teams.filter(t => selectedTeamIds.includes(String(t.id)));
+        return userTeams.some(t => t.members && t.members.some(m => m.id === u.id));
+      });
+    }
+    // 2. If Story and team_id selected: Filter users in that team
+    else if (!isEpic && formData.team_id) {
+      const team = teams.find(t => String(t.id) === String(formData.team_id));
+      if (team && team.members) {
+        return team.members;
+      }
+    }
+
+    // 3. Default: All Users
+    return users;
+  }, [isEpic, formData.team_ids, formData.team_id, teams, users]);
 
 
   const handleAssigneeChange = (e) => {
@@ -210,8 +203,6 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
       assignee_id: userId || '',
       assignee: selected ? selected.username : ''
     }));
-
-    console.debug('Assignee selected', { rawValue, parsedId: userId, selected });
   };
 
   const handleSubmit = async (e) => {
@@ -232,26 +223,49 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         ? formData.assignee_id
         : (formData.assignee_id ? parseInt(formData.assignee_id, 10) : null);
 
-      const payload = {
-        ...formData,
+      const commonPayload = {
+        title: formData.title,
+        description: formData.description,
         project_id: activeProjectId || (formData.project_id ? parseInt(formData.project_id) : null),
-        assigned_to: assigned_to_value || null,
-        team_id: formData.team_id ? parseInt(formData.team_id) : null,
-        story_pointer: 0,
-        support_doc: file,
         start_date: formData.start_date || null,
-        end_date: formData.end_date || null
+        end_date: formData.end_date || null,
+        status: formData.status,
+        assigned_to: assigned_to_value || null,
       };
 
-      // Ensure assignee is part of the team *before* creating the issue. Some backend logic
-      // may reject or override assigned_to if the user is not a member of the selected team.
-      if (payload.team_id && payload.assigned_to) {
-        console.debug('Syncing team membership before create', { team_id: payload.team_id, assigned_to: payload.assigned_to });
-        await syncTeamMembership(payload.team_id, payload.assigned_to);
-      }
+      if (isEpic) {
+        // EPIC CREATION
+        await epicService.create({
+          ...commonPayload,
+          team_ids: formData.team_ids ? formData.team_ids.map(id => parseInt(id)) : []
+        });
+      } else {
+        // STORY/BUG CREATION
+        // Construct explicit payload to avoid sending 'team_ids' or other extra fields to story endpoint
+        const payload = {
+          title: commonPayload.title,
+          description: commonPayload.description,
+          project_id: commonPayload.project_id,
+          start_date: commonPayload.start_date || null,
+          end_date: commonPayload.end_date || null,
+          status: commonPayload.status,
+          priority: formData.priority,
+          issue_type: formData.issue_type,
+          sprint_number: (formData.sprint_number && formData.sprint_number !== '') ? formData.sprint_number : null,
+          parent_issue_id: (formData.parent_issue_id && formData.parent_issue_id !== '') ? parseInt(formData.parent_issue_id) : null,
+          assignee: formData.assignee || '',
+          assigned_to: assigned_to_value || null,
+          team_id: (formData.team_id && formData.team_id !== '') ? parseInt(formData.team_id) : null,
+          story_pointer: 0,
+          support_doc: file,
+          epic_id: (formData.epic_id && formData.epic_id !== '') ? parseInt(formData.epic_id) : null
+        };
 
-      console.debug('Create issue payload:', payload);
-      await storyService.create(payload);
+        if (payload.team_id && payload.assigned_to) {
+          await syncTeamMembership(payload.team_id, payload.assigned_to);
+        }
+        await storyService.create(payload);
+      }
 
       onIssueCreated();
 
@@ -261,6 +275,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
           assignee: prev.assignee,
           assignee_id: prev.assignee_id,
           team_id: prev.team_id,
+          team_ids: [],
           issue_type: prev.issue_type,
           priority: prev.priority
         }));
@@ -270,7 +285,17 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
       }
     } catch (err) {
       console.error('Create issue failed', err);
-      setError('Failed to create issue');
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+
+      // Show more detailed error to user
+      const detail = err.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        const errorMessages = detail.map(e => `${e.loc?.join('.')}: ${e.msg}`).join(', ');
+        setError(`Validation error: ${errorMessages}`);
+      } else {
+        setError(detail || 'Failed to create issue');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -278,11 +303,10 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
   const getIssueTypeIcon = (type) => {
     switch (type) {
-      case ISSUE_TYPES.EPIC: return <Bookmark size={16} color="#904ee2" fill="#904ee2" />; // Purple for Epic
+      case 'Epic':
+      case ISSUE_TYPES.EPIC: return <Bookmark size={16} color="#904ee2" fill="#904ee2" />;
       case ISSUE_TYPES.BUG: return <AlertCircle size={16} color="#e5493a" />;
-      case ISSUE_TYPES.STORY: return <Bookmark size={16} color="#65ba43" fill="#65ba43" />; // Green Story
-      case ISSUE_TYPES.TASK: return <CheckSquare size={16} color="#4bade8" />;
-      case ISSUE_TYPES.SUBTASK: return <CheckSquare size={16} color="#4bade8" />; // Same for subtask for now
+      case ISSUE_TYPES.STORY: return <Bookmark size={16} color="#65ba43" fill="#65ba43" />;
       default: return <CheckSquare size={16} color="#4bade8" />;
     }
   };
@@ -307,7 +331,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         <div className="jira-create-header">
           <div className="header-title-group">
             <Plus size={20} color="#0052cc" />
-            <h3>Create Issue</h3>
+            <h3>Create {isEpic ? 'Epic' : 'Issue'}</h3>
           </div>
           <div className="jira-create-controls">
             <button className="control-btn" onClick={() => setIsMinimized(true)} title="Minimize"><Minus size={18} /></button>
@@ -341,6 +365,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     value={formData.description}
                     onChange={handleChange}
                     placeholder="Description"
+                    rows={8}
                   />
                 </section>
 
@@ -369,15 +394,17 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                   </div>
                 </section>
 
-                <section className="form-section attachments-section">
-                  <label className="jira-label">Attachments</label>
-                  <div className="file-upload-zone">
-                    <Plus size={24} color="#6b778c" />
-                    <span>Click or drag file</span>
-                    <input type="file" onChange={handleFileChange} className="file-input-hidden" />
-                    {file && <div className="selected-file-badge">{file.name}</div>}
-                  </div>
-                </section>
+                {!isEpic && (
+                  <section className="form-section attachments-section">
+                    <label className="jira-label">Attachments</label>
+                    <div className="file-upload-zone">
+                      <Plus size={24} color="#6b778c" />
+                      <span>Click or drag file</span>
+                      <input type="file" onChange={handleFileChange} className="file-input-hidden" />
+                      {file && <div className="selected-file-badge">{file.name}</div>}
+                    </div>
+                  </section>
+                )}
               </div>
 
               <div className="form-sidebar">
@@ -393,12 +420,12 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     </div>
                     {isTypeDropdownOpen && (
                       <div className="jira-dropdown-floating">
-                        {[ISSUE_TYPES.EPIC, ISSUE_TYPES.STORY, ISSUE_TYPES.TASK, ISSUE_TYPES.BUG, ISSUE_TYPES.SUBTASK].map(type => (
+                        {['Epic', ISSUE_TYPES.STORY, ISSUE_TYPES.BUG].map(type => (
                           <div
                             key={type}
                             className={`dropdown-item ${formData.issue_type === type ? 'active' : ''}`}
                             onClick={() => {
-                              setFormData(prev => ({ ...prev, issue_type: type }));
+                              setFormData(prev => ({ ...prev, issue_type: type, team_ids: [], team_id: '' })); // Reset team selection on type change
                               setIsTypeDropdownOpen(false);
                             }}
                           >
@@ -411,39 +438,95 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                   </div>
                 </div>
 
-                {/* [NEW] Parent Issue Selector */}
-                {/* Only show if not Epic and options exist (or at least type is not Epic) */}
-                {formData.issue_type !== ISSUE_TYPES.EPIC && (
+                {!isEpic && (
                   <div className="sidebar-field">
-                    <label className="jira-label">
-                      {/* Show "Epic Link" for Story/Global, or "Parent" for others */}
-                      {isGlobalMode ? "Epic Link" : (
-                        formData.issue_type === ISSUE_TYPES.STORY ? 'Epic Link' :
-                          formData.issue_type === ISSUE_TYPES.SUBTASK ? 'Parent Task' :
-                            'Parent Issue')}
-                    </label>
+                    <label className="jira-label">Epic Link</label>
                     <select
                       className="jira-select-premium"
-                      name="parent_issue_id"
-                      value={formData.parent_issue_id || ''}
-                      onChange={handleParentChange}
-                      disabled={fetchingParents}
-                      required={formData.issue_type !== ISSUE_TYPES.EPIC} // Enforce parent for non-Epics
+                      name="epic_id"
+                      value={formData.epic_id || ''}
+                      onChange={handleChange}
                     >
-                      <option value="">
-                        {fetchingParents ? "Loading..." : "None"}
-                      </option>
-                      {!fetchingParents && parentOptions.length === 0 && (
-                        <option value="" disabled>No valid parents found</option>
-                      )}
-                      {parentOptions.map(p => (
-                        <option key={p.id} value={p.id}>
-                          {p.story_code} - {p.title}
-                        </option>
+                      <option value="">No Epic</option>
+                      {epics.map(epic => (
+                        <option key={epic.id} value={epic.id}>{epic.title}</option>
                       ))}
                     </select>
                   </div>
                 )}
+
+                {/* Team Selection: Multi for Epic, Single for Story */}
+                <div className="sidebar-field">
+                  <label className="jira-label">Team{isEpic ? '(s)' : ''}</label>
+                  {isEpic ? (
+                    <div className="type-selector-wrapper" ref={teamDropdownRef}>
+                      <div
+                        className="jira-custom-select-premium"
+                        onClick={() => setIsTeamDropdownOpen(!isTeamDropdownOpen)}
+                        style={{ minHeight: '36px', height: 'auto', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                      >
+                        <div className="selected-type" style={{ flexWrap: 'wrap', gap: '4px' }}>
+                          {formData.team_ids && formData.team_ids.length > 0
+                            ? (
+                              <span style={{ lineHeight: '1.4' }}>
+                                {teams.filter(t => formData.team_ids.includes(String(t.id))).map(t => t.name).join(', ')}
+                              </span>
+                            )
+                            : <span style={{ color: '#6b778c', fontWeight: 400 }}>Select Teams</span>
+                          }
+                        </div>
+                        <ChevronDown size={14} />
+                      </div>
+                      {isTeamDropdownOpen && (
+                        <div className="jira-dropdown-floating" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                          {teams.map(t => (
+                            <div
+                              key={t.id}
+                              className={`dropdown-item ${formData.team_ids.includes(String(t.id)) ? 'active' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const currentIds = formData.team_ids || [];
+                                const idStr = String(t.id);
+                                let newIds;
+                                if (currentIds.includes(idStr)) {
+                                  newIds = currentIds.filter(id => id !== idStr);
+                                } else {
+                                  newIds = [...currentIds, idStr];
+                                }
+                                setFormData(prev => ({ ...prev, team_ids: newIds }));
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={formData.team_ids.includes(String(t.id))}
+                                readOnly
+                                style={{ marginRight: '8px', cursor: 'pointer' }}
+                              />
+                              <span>{t.name}</span>
+                            </div>
+                          ))}
+                          {teams.length === 0 && <div className="dropdown-item" style={{ fontStyle: 'italic', color: '#666' }}>No teams available</div>}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <select
+                      className="jira-select-premium"
+                      name="team_id"
+                      value={formData.team_id}
+                      onChange={handleChange}
+                    >
+                      <option value="">No Team</option>
+                      {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                    </select>
+                  )}
+                  {teams.length === 0 && (
+                    <div className="warning-box" style={{ padding: '8px', background: '#ffebe6', color: '#de350b', borderRadius: '3px', marginTop: '8px', fontSize: '11px', lineHeight: '1.4' }}>
+                      <AlertCircle size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-top' }} />
+                      No teams found.
+                    </div>
+                  )}
+                </div>
 
                 <div className="sidebar-field">
                   <label className="jira-label">Assignee</label>
@@ -451,57 +534,42 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     className="jira-select-premium"
                     value={formData.assignee_id}
                     onChange={handleAssigneeChange}
-                    disabled={!canAssignOthers} // Disable if not allowed to assign others
+                    disabled={!canAssignOthers}
                   >
                     <option value="">{canAssignOthers ? "Unassigned" : "Assigned to me"}</option>
-                    {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
+                    {availableAssignees.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
                   </select>
                 </div>
 
-                <div className="sidebar-field">
-                  <label className="jira-label">Team</label>
-                  <select
-                    className="jira-select-premium"
-                    name="team_id"
-                    value={formData.team_id}
-                    onChange={handleChange}
-                  >
-                    <option value="">No Team</option>
-                    {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-                  </select>
-                  {teams.length === 0 && (
-                    <div className="warning-box" style={{ padding: '8px', background: '#ffebe6', color: '#de350b', borderRadius: '3px', marginTop: '8px', fontSize: '11px', lineHeight: '1.4' }}>
-                      <AlertCircle size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-top' }} />
-                      No teams found in this project. You must create a team first.
+                {!isEpic && (
+                  <>
+                    <div className="sidebar-field">
+                      <label className="jira-label">Priority</label>
+                      <select
+                        className="jira-select-premium"
+                        name="priority"
+                        value={formData.priority}
+                        onChange={handleChange}
+                      >
+                        <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
+                        <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
+                        <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
+                      </select>
                     </div>
-                  )}
-                </div>
 
-                <div className="sidebar-field">
-                  <label className="jira-label">Priority</label>
-                  <select
-                    className="jira-select-premium"
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleChange}
-                  >
-                    <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
-                    <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
-                    <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
-                  </select>
-                </div>
-
-                <div className="sidebar-field">
-                  <label className="jira-label">Sprint</label>
-                  <input
-                    type="text"
-                    className="jira-input-premium"
-                    name="sprint_number"
-                    value={formData.sprint_number}
-                    onChange={handleChange}
-                    placeholder="Sprint 1"
-                  />
-                </div>
+                    <div className="sidebar-field">
+                      <label className="jira-label">Sprint</label>
+                      <input
+                        type="text"
+                        className="jira-input-premium"
+                        name="sprint_number"
+                        value={formData.sprint_number}
+                        onChange={handleChange}
+                        placeholder="Sprint 1"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </form>
           </div>
@@ -509,14 +577,16 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
         <div className="jira-create-footer">
           <div className="footer-left">
-            <label className="create-another-checkbox">
-              <input
-                type="checkbox"
-                checked={createAnother}
-                onChange={e => setCreateAnother(e.target.checked)}
-              />
-              <span>Create another</span>
-            </label>
+            {!isEpic && (
+              <label className="create-another-checkbox">
+                <input
+                  type="checkbox"
+                  checked={createAnother}
+                  onChange={e => setCreateAnother(e.target.checked)}
+                />
+                <span>Create another</span>
+              </label>
+            )}
           </div>
           <div className="footer-right">
             <Button variant="subtle" onClick={onClose}>Cancel</Button>
@@ -524,10 +594,10 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
               type="submit"
               form="create-issue-form"
               variant="primary"
-              disabled={isLoading || (teams.length === 0 && !fetchingParents)} // Disable if no teams
+              disabled={isLoading || (!isEpic && teams.length === 0)}
               className="create-submit-btn"
             >
-              {isLoading ? 'Creating…' : (createAnother ? 'Create & Add Another' : 'Create')}
+              {isLoading ? 'Creating…' : ((createAnother && !isEpic) ? 'Create & Add Another' : 'Create')}
             </Button>
           </div>
         </div>

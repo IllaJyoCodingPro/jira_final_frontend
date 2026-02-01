@@ -187,7 +187,12 @@ const ProjectList = () => {
             <CreateProjectModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onProjectCreated={fetchProjects}
+                onProjectCreated={(newProject) => {
+                    fetchProjects();
+                    if (newProject && newProject.id) {
+                        navigate(`/projects/${newProject.id}/board`);
+                    }
+                }}
                 onCreateTeam={handleOpenTeamModal}
             />
 
