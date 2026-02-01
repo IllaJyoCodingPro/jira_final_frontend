@@ -51,12 +51,6 @@ const Board = () => {
     const fetchIssues = async () => {
         try {
             const data = await storyService.getByProject(projectId);
-            console.log('=== API Response ===');
-            console.log('Total issues from API:', data.length);
-            console.log('Sample issue:', data[0]);
-            data.forEach(issue => {
-                console.log(`Issue "${issue.title}": epic_id = "${issue.epic_id}" (type: ${typeof issue.epic_id}, is null: ${issue.epic_id === null}, is empty: ${issue.epic_id === ''})`);
-            });
             setIssues(data);
         } catch (error) {
             console.error("Failed to fetch issues", error);
@@ -125,24 +119,17 @@ const Board = () => {
         const grouped = {};
         COLUMNS.forEach(col => grouped[col] = []);
 
-        const filteredIssues = issues.filter(issue => {
-            // Ignore if it's an Epic itself
-            if (issue.issue_type === ISSUE_TYPES.EPIC) return false;
-            return isMatch(issue);
-        });
+        issues.forEach(issue => {
+            // Ignore if it's an Epic itself (though epics shouldn't be in the issues list anymore usually, 
+            // but just in case APIs are mixed)
+            if (issue.issue_type === ISSUE_TYPES.EPIC) return;
 
-        console.log('=== Filtering Results ===');
-        console.log('Total issues:', issues.length);
-        console.log('Filtered issues:', filteredIssues.length);
-        console.log('Selected epic ID:', selectedEpicId);
-        console.log('Filtered issues data:', filteredIssues.map(i => ({ title: i.title, status: i.status, epic_id: i.epic_id })));
-
-        filteredIssues.forEach(issue => {
             const normalized = normalizeStatus(issue.status);
-            grouped[normalized].push(issue);
-        });
 
-        console.log('Grouped by status:', Object.keys(grouped).map(k => ({ status: k, count: grouped[k].length })));
+            if (isMatch(issue)) {
+                grouped[normalized].push(issue);
+            }
+        });
         return grouped;
     };
 
