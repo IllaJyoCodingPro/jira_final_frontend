@@ -15,6 +15,10 @@ export const statsService = {
         const response = await api.get(url);
         return response.data;
     },
+    getLandingStats: async () => {
+        const response = await api.get(endpoints.stats.landing);
+        return response.data;
+    },
 };
 
 export const modeSwitchService = {

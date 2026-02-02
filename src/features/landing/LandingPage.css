@@ -1,17 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
 .landing-container {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Charlie Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
     background: white;
     color: #172b4d;
+    overflow-x: hidden;
 }
 
+/* Navbar */
 .landing-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 16px 40px;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.landing-nav-start {
+    display: flex;
+    align-items: center;
+    gap: 40px;
 }
 
 .landing-logo-container {
@@ -24,218 +36,386 @@
 }
 
 .landing-logo-text {
-    letter-spacing: -1px;
+    font-family: 'Charlie Display', sans-serif;
+    font-weight: bold;
+    font-size: 28px;
+    color: #253858;
 }
 
-.landing-nav-links {
+.landing-nav-end {
     display: flex;
+    align-items: center;
     gap: 16px;
 }
 
-.landing-login-btn {
-    background: transparent;
-    border: none;
-    color: #0052cc;
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 8px 16px;
-}
-
-.landing-signup-btn {
+.landing-btn-free {
     background: #0052cc;
     color: white;
     border: none;
     border-radius: 3px;
+    padding: 8px 16px;
     font-weight: bold;
-    font-size: 14px;
-    padding: 10px 20px;
     cursor: pointer;
+    font-size: 14px;
 }
 
+.landing-btn-signin {
+    background: none;
+    border: none;
+    color: #0052cc;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Hero Section */
 .landing-hero {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
-    margin: 60px auto 0;
-    padding: 0 40px;
-    gap: 60px;
-    padding-bottom: 80px;
+    padding: 60px 40px 100px;
+    background: linear-gradient(to bottom right, #deebff 0%, #f4f5f7 100%);
+    position: relative;
+    overflow: visible;
 }
 
 .landing-hero-content {
     flex: 1;
     max-width: 500px;
+    padding-top: 40px;
+    padding-left: 20px;
+    z-index: 10;
 }
 
 .landing-hero-title {
-    font-size: 52px;
-    font-weight: 700;
+    font-size: 56px;
+    font-weight: 900;
     line-height: 1.1;
-    margin-bottom: 24px;
     color: #091e42;
+    margin-bottom: 24px;
+    font-family: 'Charlie Display', sans-serif;
 }
 
 .landing-hero-subtitle {
     font-size: 20px;
-    font-weight: 400;
-    line-height: 1.4;
-    margin-bottom: 32px;
     color: #42526e;
+    margin-bottom: 32px;
+    line-height: 1.4;
 }
 
-.landing-cta-group {
+.landing-signup-form {
+    background: white;
+    padding: 0;
+    border-radius: 4px;
+    margin-bottom: 24px;
     display: flex;
-    gap: 16px;
+    flex-direction: column;
+    gap: 8px;
+    background-color: transparent;
+}
+
+.landing-input-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #44546f;
+    margin-left: 4px;
+}
+
+.landing-email-input {
+    padding: 12px 16px;
+    border: 1px solid #dfe1e6;
+    border-radius: 30px;
+    font-size: 16px;
+    margin-bottom: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .landing-cta-primary {
     background: #0052cc;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 30px;
+    padding: 12px 24px;
     font-weight: bold;
     font-size: 16px;
-    padding: 12px 24px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 82, 204, 0.2);
+    width: 100%;
 }
 
-.landing-hero-image {
-    flex: 1;
-    display: flex;
-    justify-content: center;
+.landing-cta-primary:hover {
+    background: #0065ff;
 }
 
-/* Abstract UI */
-.landing-abstract-ui {
-    width: 440px;
-    height: 320px;
+/* Hero Visual (Kanban Board) */
+.landing-hero-visual {
+    flex: 1.5;
+    position: relative;
+    padding-left: 60px;
+}
+
+.landing-visual-heading {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.landing-visual-heading h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #000;
+    transform: rotate(-2deg);
+    display: inline-block;
+}
+
+/* Floating Labels */
+.visual-float-label {
+    position: absolute;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.label-project {
+    background: #a166ff;
+    top: 50px;
+    right: 50px;
+    transform: rotate(4deg);
+}
+
+.label-engineering {
+    background: #79bf2b;
+    top: 250px;
+    left: 20px;
+    transform: rotate(-6deg);
+}
+
+.label-marketing {
+    background: #ffab00;
+    bottom: 100px;
+    right: 150px;
+    transform: rotate(3deg);
+}
+
+/* Kanban Board Container */
+.kanban-board-container {
     background: white;
+    /* Very light blue tint */
     border-radius: 8px;
-    box-shadow: 0 20px 40px rgba(9, 30, 66, 0.15);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #dfe1e6;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(9, 30, 66, 0.1);
+    max-width: 800px;
+    position: relative;
+    /* Tilt effect */
+    transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
 }
 
-.landing-ui-header {
-    height: 12px;
-    background: #f4f5f7;
-    border-bottom: 1px solid #dfe1e6;
+.kanban-header-row {
     display: flex;
     align-items: center;
-    padding: 0 10px;
-    gap: 6px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.landing-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #dfe1e6;
-}
-
-.landing-ui-body {
-    flex: 1;
-    display: flex;
-}
-
-.landing-ui-sidebar {
-    width: 80px;
-    background: #fafbfc;
-    border-right: 1px solid #dfe1e6;
-}
-
-.landing-ui-content {
-    flex: 1;
-    padding: 20px;
-}
-
-.landing-ui-row {
-    width: 100%;
-    height: 12px;
-    background: #ebecf0;
-    margin-bottom: 12px;
-    border-radius: 2px;
-}
-
-.landing-ui-card {
-    width: 45%;
-    height: 60px;
-    background: #deebff;
-    margin-bottom: 12px;
-    border-radius: 3px;
-    display: inline-block;
-    margin-right: 5%;
-}
-
-.landing-ui-card-yellow {
+.kanban-project-icon {
+    width: 32px;
+    height: 32px;
     background: #fffae6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
 }
 
-/* Trusted Section */
-.landing-trusted-section {
-    background: #fafbfc;
-    text-align: center;
-    padding: 60px 20px;
+.kanban-project-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #172b4d;
 }
 
-.landing-trusted-title {
+.kanban-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 2px solid #ebecf0;
+    padding-bottom: 0;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #6b778c;
+    font-weight: 500;
+}
+
+.active-tab {
+    color: #0052cc;
+    padding-bottom: 12px;
+    cursor: pointer;
+}
+
+.active-tab.highlight {
+    border-bottom: 2px solid #0052cc;
+    margin-bottom: -2px;
+}
+
+.kanban-columns {
+    display: flex;
+    gap: 16px;
+}
+
+.kanban-column {
+    flex: 1;
+    background: #f4f5f7;
+    border-radius: 4px;
+    padding: 12px;
+    min-height: 300px;
+}
+
+.column-header {
     font-size: 12px;
     font-weight: 700;
     color: #6b778c;
-    letter-spacing: 1px;
-    margin-bottom: 30px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
 }
 
-.landing-logo-grid {
+.kanban-card {
+    background: white;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.15);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kanban-card:hover {
+    background: #ebecf0;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #172b4d;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.card-meta {
     display: flex;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-    opacity: 0.6;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.landing-company-logo {
-    font-size: 20px;
-    font-weight: 800;
+.card-id {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b778c;
+}
+
+.card-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-avatar.purple {
+    background-color: #6554c0;
+}
+
+.card-avatar.orange {
+    background-color: #ff991f;
+}
+
+.card-avatar.green {
+    background-color: #36b37e;
+}
+
+.card-avatar.blue {
+    background-color: #0065ff;
+}
+
+.card-avatar.yellow {
+    background-color: #ffab00;
+}
+
+/* Stats Section */
+.landing-stats-section {
+    background: #ffffff;
+    padding: 60px 40px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.landing-stats-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.landing-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+}
+
+.landing-stat-number {
+    font-size: 48px;
+    font-weight: 900;
+    color: #0052cc;
+    line-height: 1;
+    margin-bottom: 8px;
+    font-family: 'Charlie Display', sans-serif;
+}
+
+.landing-stat-label {
+    font-size: 16px;
     color: #42526e;
-    font-family: Arial, sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Features Section */
 .landing-features-section {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 80px 40px;
     text-align: center;
+    background: white;
 }
 
 .landing-features-header {
     font-size: 36px;
-    font-weight: 600;
+    font-weight: 500;
     color: #091e42;
-    margin-bottom: 60px;
+    margin-bottom: 80px;
 }
 
 .landing-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 60px;
 }
 
 .landing-feature-card {
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .landing-icon-container {
-    margin-bottom: 20px;
-    background: #deebff;
-    width: 60px;
-    height: 60px;
+    margin-bottom: 24px;
+    background: #e9f2ff;
+    width: 48px;
+    height: 48px;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -244,46 +424,79 @@
 
 .landing-card-title {
     font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 12px;
+    font-weight: 500;
+    margin-bottom: 16px;
     color: #172b4d;
 }
 
 .landing-card-text {
     font-size: 16px;
-    color: #42526e;
-    line-height: 1.5;
+    color: #44546f;
+    line-height: 1.6;
 }
 
 /* Footer */
 .landing-footer {
+    padding: 80px 0 40px;
+    background: linear-gradient(to top right, #deebff 0%, #f4f5f7 100%);
     border-top: 1px solid #dfe1e6;
-    padding: 40px 0;
-    background: #f4f5f7;
+}
+
+.landing-footer-cta {
+    text-align: center;
+    margin-bottom: 80px;
+    padding: 0 20px;
+}
+
+.landing-footer-cta h3 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #091e42;
+    margin-bottom: 24px;
+    font-family: 'Charlie Display', sans-serif;
+}
+
+.landing-footer-cta .landing-cta-primary {
+    width: auto;
+    padding: 12px 32px;
+    font-size: 18px;
 }
 
 .landing-footer-content {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 24px;
+}
+
+.landing-footer-tagline {
+    font-size: 16px;
+    color: #42526e;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 400px;
 }
 
 .landing-footer-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
-.landing-footer-logo-text {
-    font-size: 18px;
-    font-weight: bold;
-    color: #42526e;
+.landing-footer-bottom {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 40px 0;
+    border-top: 1px solid rgba(9, 30, 66, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .landing-copyright {
-    font-size: 14px;
     color: #6b778c;
+    font-size: 14px;
 }
