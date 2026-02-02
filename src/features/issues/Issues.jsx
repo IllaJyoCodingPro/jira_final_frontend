@@ -83,7 +83,6 @@ const Issues = () => {
         const sprintMap = {};
 
         data.forEach(issue => {
-
             const matchesSprint =
                 sprintFilter === 'All' ||
                 String(issue.sprint_number) === sprintFilter;
@@ -98,17 +97,19 @@ const Issues = () => {
 
             if (!(matchesSprint && matchesAssignee && matchesTeam)) return;
 
-            if (!issue.sprint_number || issue.sprint_number === 'Backlog') {
+            if (!issue.end_date) {
                 backlog.push(issue);
             } else {
-                if (!sprintMap[issue.sprint_number]) {
-                    sprintMap[issue.sprint_number] = {
-                        id: `sprint-${issue.sprint_number}`,
-                        name: `Sprint ${issue.sprint_number}`,
+                const dateKey = issue.end_date;
+                if (!sprintMap[dateKey]) {
+                    sprintMap[dateKey] = {
+                        id: `sprint-${issue.sprint_number || dateKey}`,
+                        name: issue.sprint_number ? `Sprint ${issue.sprint_number}` : `Sprint ${dateKey}`,
+                        date: new Date(dateKey),
                         issues: []
                     };
                 }
-                sprintMap[issue.sprint_number].issues.push(issue);
+                sprintMap[dateKey].issues.push(issue);
             }
         });
 
@@ -129,7 +130,7 @@ const Issues = () => {
         setSprints(
             Object.values(sprintMap)
                 .map(s => ({ ...s, issues: sortIssues(s.issues) }))
-                .sort((a, b) => b.name.localeCompare(a.name))
+                .sort((a, b) => a.date - b.date)
         );
     };
 

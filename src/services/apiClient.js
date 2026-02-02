@@ -4,7 +4,7 @@ const FRONTEND_PORT = 5173;
 export const BACKEND_PORT = 8000;
 export const API_PREFIX = '/api';
 export const BACKEND_URL = `http://127.0.0.1:${BACKEND_PORT}`;
- 
+
 const api = axios.create({
     baseURL: API_PREFIX,
     headers: {
@@ -40,6 +40,8 @@ api.interceptors.response.use(
 
         if (error.response?.status === 401) {
             localStorage.removeItem('token');
+            // Broadcast event for AuthContext to handle logout
+            window.dispatchEvent(new CustomEvent('auth-unauthorized'));
         }
 
         if (error.response?.status === 403) {
