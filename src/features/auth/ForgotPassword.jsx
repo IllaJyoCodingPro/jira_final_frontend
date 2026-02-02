@@ -45,19 +45,10 @@ export default function ForgotPassword() {
             </div>
 
             {error && <div className="jira-reset-error">{formatError(error)}</div>}
-            {message && <div className="auth-success-toast">{message}</div>}
+
 
             <form onSubmit={handleSubmit} className="auth-form">
-                <div className="auth-input-group">
-                    <label>Email Address</label>
-                    <input
-                        type="email"
-                        placeholder="e.g. name@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
+
 
                 <h3 className="jira-marketing-title">Can't log in?</h3>
 
