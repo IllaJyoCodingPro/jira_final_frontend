@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const idleTimerRef = useRef(null);
 
-    const INACTIVITY_TIMEOUT = 1 * 60 * 1000; // 1 minute
+    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 1 minute
 
     // --- Logout logic ---
     const logout = useCallback(() => {

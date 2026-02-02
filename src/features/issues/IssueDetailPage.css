@@ -1,33 +1,36 @@
 .issue-detail-page {
-    max-width: 1400px;
-    /* Wider for the horizontal layout */
-    margin: 0 auto;
-    padding: 32px 40px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 48px 64px;
     background-color: #ffffff;
-    min-height: 100vh;
-    animation: fadeIn 0.3s ease-out;
+    min-height: calc(100vh - 80px);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f1f4;
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeIn {
+@keyframes slideUpFade {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px) scale(0.98);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
+
 
 /* Header */
 .issue-detail-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 32px;
-    border-bottom: 2px solid #ebecf0;
-    padding-bottom: 24px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #f0f1f4;
+    padding-bottom: 32px;
 }
 
 .header-left {
@@ -45,11 +48,12 @@
 }
 
 .issue-title {
-    font-size: 28px;
-    font-weight: 500;
-    color: #172b4d;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1e23;
     margin: 0;
     line-height: 1.2;
+    letter-spacing: -0.02em;
 }
 
 .header-actions {
@@ -60,12 +64,13 @@
 /* Classic Info Grid (Top Section) */
 .classic-info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    /* 3 Columns */
-    gap: 40px;
-    margin-bottom: 48px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid #ebecf0;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 48px;
+    margin-bottom: 56px;
+    padding: 32px;
+    background: #fbfbfd;
+    border-radius: 12px;
+    border: 1px solid #f0f1f4;
 }
 
 .info-column {
@@ -159,31 +164,38 @@
 /* Status Badges */
 .status-badge {
     text-transform: uppercase;
-    font-weight: 700;
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 3px;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 6px;
     display: inline-block;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+}
+
+.status-badge:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
 }
 
 .status-todo {
-    background-color: #dfe1e6;
-    color: #42526e;
+    background-color: hsl(220, 15%, 90%);
+    color: hsl(220, 20%, 30%);
 }
 
 .status-inprogress {
-    background-color: #deebff;
-    color: #0052cc;
+    background-color: hsl(210, 100%, 94%);
+    color: hsl(210, 100%, 40%);
 }
 
 .status-review {
-    background-color: #eae6ff;
-    color: #403294;
+    background-color: hsl(255, 100%, 95%);
+    color: hsl(255, 60%, 40%);
 }
 
 .status-done {
-    background-color: #e3fcef;
-    color: #006644;
+    background-color: hsl(150, 100%, 94%);
+    color: hsl(150, 100%, 25%);
 }
 
 @media (max-width: 1024px) {

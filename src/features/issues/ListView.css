@@ -17,10 +17,11 @@
 }
 
 .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
 .dashboard-header {
@@ -139,6 +140,19 @@
 
 .title-icon {
     color: #4c9aff;
+    animation: iconBounce 2s infinite ease-in-out;
+}
+
+@keyframes iconBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
 }
 
 .list-view-header h1 {
@@ -163,10 +177,18 @@
 }
 
 .glass-subtle {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(200, 200, 200, 0.2);
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-subtle:focus-within {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 2px rgba(76, 154, 255, 0.3);
+    border-color: #4c9aff;
 }
 
 .search-box input {
@@ -224,17 +246,24 @@
     background-color: #ebecf0;
 }
 
+.spreadsheet-table tbody tr {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spreadsheet-table tbody tr:hover {
+    background-color: #fff;
+    transform: scale(1.002) translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+}
+
 .spreadsheet-table tbody td {
-    padding: 8px 16px;
-    border-bottom: 1px solid #f4f5f7;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f1f4;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: background-color 0.1s;
-}
-
-.spreadsheet-table tbody tr:hover td {
-    background-color: #f4f5f7;
+    transition: background-color 0.2s;
 }
 
 /* Inline Edit Components */
@@ -274,28 +303,42 @@
     color: #006644;
 }
 
-.status-badge {
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
+.status-tag {
+    transition: all 0.3s ease;
+}
+
+.status-tag:hover {
+    transform: translateY(-1px) scale(1.05);
+    filter: brightness(1.05);
 }
 
 .status-todo {
-    background-color: #dfe1e6;
-    color: #42526e;
+    background-color: hsl(220, 15%, 90%);
+    color: hsl(220, 20%, 30%);
 }
 
 .status-inprogress {
-    background-color: #deebff;
-    color: #0747a6;
+    background-color: hsl(210, 100%, 94%);
+    color: hsl(210, 100%, 40%);
 }
 
 .status-done {
-    background-color: #e3fcef;
-    color: #006644;
+    background-color: hsl(150, 100%, 94%);
+    color: hsl(150, 100%, 25%);
+}
+
+.priority-cell a {
+    transition: all 0.2s ease;
+}
+
+.priority-cell a:hover {
+    color: #0052cc !important;
+    text-decoration: underline !important;
+}
+
+tbody td a:hover {
+    color: #0052cc !important;
+    text-decoration: underline !important;
 }
 
 .assignee-cell {

@@ -151,7 +151,6 @@ const ListView = () => {
                         <th onClick={() => requestSort('assignee')}>Assignee</th>
                         <th onClick={() => requestSort('team_id')}>Team</th>
                         <th onClick={() => requestSort('priority')}>Priority</th>
-                        <th onClick={() => requestSort('story_points')}>Points</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -179,68 +178,47 @@ const ListView = () => {
                                 </Link>
                             </td>
                             <td>
-                                <div className={`status-tag status-${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}>
-                                    <select
-                                        className="inline-edit-select"
-                                        value={issue.status}
-                                        onChange={(e) => handleUpdate(issue.id, 'status', e.target.value)}
-                                        disabled={!canUpdateStatus(issue)}
-                                    >
-                                        <option value="To Do">To Do</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Done">Done</option>
-                                    </select>
-                                </div>
-                            </td>
-                            <td>
-                                <input
-                                    className="inline-edit-select"
-                                    value={issue.assignee || ''}
-                                    onChange={(e) => setIssues(prev => prev.map(i => i.id === issue.id ? { ...i, assignee: e.target.value } : i))}
-                                    onBlur={(e) => handleUpdate(issue.id, 'assignee', e.target.value)}
-                                    placeholder="Unassigned"
-                                    disabled={isIssueReadOnly(issue)}
-                                />
-                            </td>
-                            <td>
-                                <select
-                                    className="inline-edit-select"
-                                    value={issue.team_id || ''}
-                                    onChange={(e) => handleUpdate(issue.id, 'team_id', e.target.value)}
-                                    disabled={!canEditTeamField()}
+                                <Link
+                                    to={`/projects/${projectId}/issues/${issue.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}
                                 >
-                                    <option value="">No Team</option>
-                                    {teams.map(t => (
-                                        <option key={t.id} value={t.id}>{t.name}</option>
-                                    ))}
-                                </select>
+                                    <div className={`status-tag status-${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}>
+                                        {issue.status}
+                                    </div>
+                                </Link>
+                            </td>
+                            <td>
+                                <Link
+                                    to={`/projects/${projectId}/issues/${issue.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}
+                                >
+                                    {issue.assignee || 'Unassigned'}
+                                </Link>
+                            </td>
+                            <td>
+                                <Link
+                                    to={`/projects/${projectId}/issues/${issue.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}
+                                >
+                                    {teams.find(t => String(t.id) === String(issue.team_id))?.name || 'No Team'}
+                                </Link>
                             </td>
                             <td className="priority-cell">
-                                <div className="priority-wrapper">
+                                <Link
+                                    to={`/projects/${projectId}/issues/${issue.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                >
                                     {getPriorityIcon(issue.priority)}
-                                    <select
-                                        className="inline-edit-select"
-                                        value={issue.priority || ISSUE_PRIORITY.MEDIUM}
-                                        onChange={(e) => handleUpdate(issue.id, 'priority', e.target.value)}
-                                        disabled={isIssueReadOnly(issue)}
-                                    >
-                                        <option value="High">High</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="Low">Low</option>
-                                    </select>
-                                </div>
-                            </td>
-                            <td>
-                                <input
-                                    type="number"
-                                    className="inline-edit-select"
-                                    value={issue.story_points || ''}
-                                    onChange={(e) => setIssues(prev => prev.map(i => i.id === issue.id ? { ...i, story_points: e.target.value } : i))}
-                                    onBlur={(e) => handleUpdate(issue.id, 'story_points', e.target.value)}
-                                    placeholder="-"
-                                    style={{ width: '60px' }}
-                                    disabled={isIssueReadOnly(issue)}
-                                />
+                                    <span>{issue.priority || ISSUE_PRIORITY.MEDIUM}</span>
+                                </Link>
                             </td>
                         </tr>
                     ))}
