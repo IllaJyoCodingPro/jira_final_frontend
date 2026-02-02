@@ -18,6 +18,7 @@ import {
     Filter,
     MoreHorizontal
 } from 'lucide-react';
+import { formatDateTime } from '../../utils/dateUtils';
 
 const ProjectList = () => {
     const { user } = useAuth();
@@ -160,6 +161,9 @@ const ProjectList = () => {
 
                                 <div className="card-footer">
                                     <div className="footer-left">
+                                        <span style={{ fontSize: '11px', color: '#6b7280' }}>
+                                            Created: {formatDateTime(project.created_at)}
+                                        </span>
                                     </div>
                                     <ChevronRight className="arrow-icon" size={18} />
                                 </div>
