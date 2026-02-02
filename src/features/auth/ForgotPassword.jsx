@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import kietLogo from '../../assets/kiet-logo.png';
 import { formatError } from '../../utils/renderUtils';
-import './Auth.css';
+import './JiraAuth.css';
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -44,58 +44,65 @@ export default function ForgotPassword() {
                 </div>
             </div>
 
-            {error && <div className="jira-reset-error">{formatError(error)}</div>}
+            <div className="jira-content-wrapper">
+                {/* Left Side: Info */}
+                <div className="jira-marketing-col" style={{ justifyContent: 'center', paddingBottom: '40px' }}>
+                    <div style={{ textAlign: 'left' }}>
 
+                        <div className="jira-illustration-placeholder" style={{ justifyContent: 'flex-start', height: '160px', marginBottom: '20px', marginTop: '10px', width: 'auto' }}>
+                            <div className="jira-bar-1"></div>
+                            <div className="jira-bar-2"></div>
+                            <div className="jira-bar-3"></div>
+                        </div>
 
-            <form onSubmit={handleSubmit} className="auth-form">
+                        <h3 className="jira-marketing-title" style={{ marginBottom: '20px' }}>Can't log in?</h3> 
 
-
-                <h3 className="jira-marketing-title">Can't log in?</h3>
-
-                <div className="jira-checklist">
-                    <div className="jira-check-item">✓ Enter your email address</div>
-                    <div className="jira-check-item">✓ Get a secure reset link</div>
-                    <div className="jira-check-item">✓ Regain access to your work</div>
+                        <div className="jira-checklist">
+                            <div className="jira-check-item">✓ Enter your email address</div>
+                            <div className="jira-check-item">✓ Get a secure reset link</div>
+                            <div className="jira-check-item">✓ Regain access to your work</div>
+                        </div>
+                    </div>
                 </div>
-            </form>
 
-            {/* Right Side: Forgot Card */}
-            <div className="jira-form-card">
-                <h2 className="jira-card-header">Trouble Logging In?</h2>
-                <p className="jira-card-sub-header">We'll send a recovery link to your email</p>
+                {/* Right Side: Forgot Card */}
+                <div className="jira-form-card">
+                    <h2 className="jira-card-header">Reset Forgot Password</h2>
+                    <p className="jira-card-sub-header">We'll send a recovery link to your email</p>
 
-                {error && <div className="jira-auth-error-toast">{error}</div>}
-                {message && <div className="jira-auth-success-toast">{message}</div>}
+                    {error && <div className="jira-auth-error-toast">{error}</div>}
+                    {message && <div className="jira-auth-success-toast">{message}</div>}
 
-                <form onSubmit={handleSubmit} className="jira-form-stack">
-                    <div className="jira-field-group">
-                        <label className="jira-label">Email Address</label>
-                        <input
-                            type="email"
-                            className="jira-input"
-                            placeholder="e.g. name@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                    <form onSubmit={handleSubmit} className="jira-form-stack">
+                        <div className="jira-field-group">
+                            <label className="jira-label">Email Address</label>
+                            <input
+                                type="email"
+                                className="jira-input"
+                                placeholder="e.g. name@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="jira-submit-btn"
+                            disabled={loading || !!message}
+                        >
+                            {loading ? "Sending Link..." : "Send Link"}
+                        </button>
+                    </form>
+
+                    <div className="jira-login-link-container">
+                        <span className="jira-link" onClick={() => navigate("/login")}>
+                            Return to Log in
+                        </span>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="jira-submit-btn"
-                        disabled={loading || !!message}
-                    >
-                        {loading ? "Sending Link..." : "Send Link"}
-                    </button>
-                </form>
-
-                <div className="jira-login-link-container">
-                    <span className="jira-link" onClick={() => navigate("/login")}>
-                        Return to Log in
-                    </span>
+                    <div className="jira-no-credit-card">SECURE RECOVERY</div>
                 </div>
-
-                <div className="jira-no-credit-card">SECURE RECOVERY</div>
             </div>
         </div>
     );
