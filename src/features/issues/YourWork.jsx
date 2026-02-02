@@ -178,7 +178,7 @@ const YourWork = () => {
                 <div>
                     <h1>{getGreeting()}, {user?.username}</h1>
                     <p style={{ color: '#5e6c84', fontSize: '14px', marginTop: '8px' }}>
-                        Here's what's happening in your projects today.
+                        Here's what's stuff today in your projects.
                     </p>
                 </div>
                 <DigitalClock />
