@@ -1,5 +1,6 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
+import { Link } from 'react-router-dom';
 import {
     CheckSquare,
     Bookmark,
@@ -33,7 +34,7 @@ const PriorityIcon = ({ priority }) => {
     }
 };
 
-const IssueCard = ({ issue, index, onClick, teams = [] }) => {
+const IssueCard = ({ issue, index, onClick, teams = [], projectId }) => {
     const team = teams.find(t => String(t.id) === String(issue.team_id));
     const teamName = team ? team.name : 'Team Assigned';
 
@@ -45,12 +46,16 @@ const IssueCard = ({ issue, index, onClick, teams = [] }) => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    onClick={onClick}
                     style={{
                         ...provided.draggableProps.style,
                     }}
                 >
-                    <div className="jira-issue-card-content">
+                    <Link
+                        to={`/projects/${projectId}/issues/${issue.id}`}
+                        target="_blank"
+                        className="jira-issue-card-content"
+                        style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}
+                    >
                         <span className="jira-issue-title">{issue.title}</span>
                         <div className="jira-issue-meta">
                             <div className="jira-issue-metadata-left">
@@ -73,7 +78,7 @@ const IssueCard = ({ issue, index, onClick, teams = [] }) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             )}
         </Draggable>

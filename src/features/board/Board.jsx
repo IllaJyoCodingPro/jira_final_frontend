@@ -318,7 +318,8 @@ const Board = () => {
                                 issues={boardColumns[status] || []}
                                 teams={teams}
                                 showHeader={true}
-                                onIssueClick={(issue) => navigate(`/projects/${projectId}/issues/${issue.id}`)}
+                                projectId={projectId}
+                                onIssueClick={(issue) => window.open(`/projects/${projectId}/issues/${issue.id}`, '_blank')}
                             />
                         ))}
                     </div>

@@ -272,14 +272,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 12 }}>
-                    <Input
-                        label="Story Points"
-                        name="story_points"
-                        type="number"
-                        value={formData.story_points || ''}
-                        onChange={handleChange}
-                        disabled={isIssueReadOnly(issue)}
-                    />
+
                     <div className="jira-input-group">
                         <label className="jira-label">Start Date</label>
                         <input
@@ -305,14 +298,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
-                    <Input
-                        label="Release / Fix Version"
-                        name="release_number"
-                        value={formData.release_number || ''}
-                        onChange={handleChange}
-                        placeholder="e.g. R-1.0"
-                        disabled={isIssueReadOnly(issue)}
-                    />
+
                     <div className="jira-input-group">
                         <label className="jira-label">Team</label>
                         <select

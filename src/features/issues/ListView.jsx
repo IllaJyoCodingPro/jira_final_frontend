@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { storyService } from '../../services/storyService';
 import { teamService } from '../../services/teamService';
 import { ISSUE_STATUS, ISSUE_PRIORITY, ISSUE_TYPES } from '../../constants';
@@ -157,17 +157,26 @@ const ListView = () => {
                 <tbody>
                     {sortedIssues.map(issue => (
                         <tr key={issue.id}>
-                            <td
-                                onClick={() => navigate(`/projects/${projectId}/issues/${issue.id}`)}
-                                style={{ cursor: 'pointer', color: '#0052cc', whiteSpace: 'nowrap' }}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <td style={{ whiteSpace: 'nowrap' }}>
+                                <Link
+                                    to={`/projects/${projectId}/issues/${issue.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0052cc', textDecoration: 'none' }}
+                                >
                                     {getIcon(issue.issue_type)}
                                     {issue.story_pointer}
-                                </div>
+                                </Link>
                             </td>
-                            <td onClick={() => navigate(`/projects/${projectId}/issues/${issue.id}`)} style={{ cursor: 'pointer' }}>
-                                {issue.title}
+                            <td>
+                                <Link
+                                    to={`/projects/${projectId}/issues/${issue.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}
+                                >
+                                    {issue.title}
+                                </Link>
                             </td>
                             <td>
                                 <div className={`status-tag status-${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}>

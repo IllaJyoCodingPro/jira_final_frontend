@@ -3,7 +3,7 @@ import { Droppable } from '@hello-pangea/dnd';
 import IssueCard from './IssueCard';
 import './BoardColumn.css';
 
-const BoardColumn = ({ id, title, issues, onIssueClick, teams = [], showHeader = true, isSwimlane = false }) => {
+const BoardColumn = ({ id, title, issues, onIssueClick, teams = [], showHeader = true, isSwimlane = false, projectId }) => {
     return (
         <div className={`jira-board-column ${isSwimlane ? 'swimlane-column' : ''}`}>
             {showHeader && (
@@ -27,6 +27,7 @@ const BoardColumn = ({ id, title, issues, onIssueClick, teams = [], showHeader =
                                 index={index}
                                 teams={teams}
                                 onClick={() => onIssueClick(issue)}
+                                projectId={projectId}
                             />
                         ))}
                         {provided.placeholder}

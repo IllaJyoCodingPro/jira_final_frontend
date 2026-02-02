@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { storyService } from '../../services/storyService';
 import { teamService } from '../../services/teamService';
+import { epicService } from '../../services/epicService';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
@@ -24,6 +25,7 @@ const IssueDetailPage = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [teams, setTeams] = useState([]);
+    const [epic, setEpic] = useState(null);
     const { canEditIssue, canDeleteIssue } = usePermissions();
 
     const fetchIssue = async () => {
@@ -45,6 +47,19 @@ const IssueDetailPage = () => {
                 .catch(err => console.error("Failed to fetch teams", err));
         }
     }, [issueId, projectId]);
+
+    useEffect(() => {
+        if (issue && issue.epic_id) {
+            epicService.getById(issue.epic_id)
+                .then(setEpic)
+                .catch(err => {
+                    console.error("Failed to fetch epic", err);
+                    setEpic(null);
+                });
+        } else {
+            setEpic(null);
+        }
+    }, [issue]);
 
     // [NEW] Check if user is Team Lead for this issue's team
     const selectedTeam = teams.find(t => String(t.id) === String(issue?.team_id));
@@ -108,7 +123,12 @@ const IssueDetailPage = () => {
                         <span>/</span>
                         <span>{issue.story_pointer}</span>
                     </div>
-                    <h1 className="issue-title">{issue.title}</h1>
+                    <div className="header-title-block">
+                        <h1 className="issue-title" style={{ marginBottom: '4px' }}>Issue: {issue.title}</h1>
+                        <h2 className="issue-epic-subtitle" style={{ fontSize: '1.2rem', color: '#5e6c84', fontWeight: '500', margin: 0 }}>
+                            Epic: {epic ? epic.title : 'None'}
+                        </h2>
+                    </div>
                 </div>
                 <div className="header-actions">
                     {canEdit && (
@@ -146,14 +166,7 @@ const IssueDetailPage = () => {
                             {issue.priority || ISSUE_PRIORITY.MEDIUM}
                         </div>
                     </div>
-                    <div className="info-field">
-                        <div className="field-label">Points:</div>
-                        <div className="field-value">
-                            <div style={{ background: '#dfe1e6', borderRadius: '10px', padding: '2px 8px', fontSize: '12px' }}>
-                                {issue.story_points || '-'}
-                            </div>
-                        </div>
-                    </div>
+
                     <div className="info-field">
                         <div className="field-label">Sprint:</div>
                         <div className="field-value">
@@ -161,12 +174,7 @@ const IssueDetailPage = () => {
                             {issue.sprint_number || 'None'}
                         </div>
                     </div>
-                    <div className="info-field">
-                        <div className="field-label">Release:</div>
-                        <div className="field-value">
-                            {issue.release_number || 'None'}
-                        </div>
-                    </div>
+
                     <div className="info-field">
                         <div className="field-label">Team:</div>
                         <div className="field-value">
@@ -188,12 +196,9 @@ const IssueDetailPage = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="info-field">
-                        <div className="field-label">Resolution:</div>
-                        <div className="field-value">
-                            {issue.status?.toUpperCase() === ISSUE_STATUS.DONE.toUpperCase() ? ISSUE_STATUS.DONE : 'Unresolved'}
-                        </div>
-                    </div>
+
+
+
                 </div>
 
                 {/* Column 3: People & Dates */}
