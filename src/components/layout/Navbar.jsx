@@ -6,7 +6,8 @@ import {
     ChevronDown,
     User,
     LogOut,
-    Settings
+    Settings,
+    Folder
 
 } from 'lucide-react';
 import { getImageUrl } from '../../utils/renderUtils';
@@ -79,19 +80,30 @@ const Navbar = ({ onCreateClick }) => {
             const searchTerm = searchQuery.toLowerCase().trim();
             if (searchTerm.length > 1) {
                 try {
-                    const results = await storyService.search(searchQuery);
+                    const [storyResults, allProjects] = await Promise.all([
+                        storyService.search(searchQuery),
+                        projectService.getAll()
+                    ]);
+
+                    const projectResults = allProjects
+                        .filter(p => p.name.toLowerCase().includes(searchTerm))
+                        .map(p => ({ ...p, type: 'project' }));
 
                     // Smart Filter: If an exact match exists for the ID (story_pointer), prioritize it
-                    const exactMatch = results.find(result =>
+                    const exactMatch = storyResults.find(result =>
                         String(result.story_pointer).toLowerCase() === searchTerm ||
                         (result.story_pointer && String(result.story_pointer).toLowerCase().split('-').pop() === searchTerm)
                     );
 
+                    let finalResults = [];
                     if (exactMatch) {
-                        setSearchResults([exactMatch]);
+                        finalResults = [exactMatch];
                     } else {
-                        setSearchResults(results);
+                        finalResults = storyResults;
                     }
+
+                    // Combine projects and stories
+                    setSearchResults([...projectResults, ...finalResults]);
                     setIsSearching(true);
                 } catch (error) {
                     console.error("Search failed", error);
@@ -118,7 +130,11 @@ const Navbar = ({ onCreateClick }) => {
     const handleResultClick = (result) => {
         setIsSearching(false);
         setSearchQuery('');
-        navigate(`/projects/${result.project_id}/board`);
+        if (result.type === 'project') {
+            navigate(`/projects/${result.id}/board`);
+        } else {
+            navigate(`/projects/${result.project_id}/board`);
+        }
     };
 
     const handleLogout = () => {
@@ -235,13 +251,20 @@ const Navbar = ({ onCreateClick }) => {
                         <div className="jira-dropdown-menu search-results">
                             {searchResults.map(result => (
                                 <div
-                                    key={result.id}
+                                    key={`${result.type || 'story'}-${result.id}`}
                                     className="jira-dropdown-item search-result-item"
                                     onClick={() => handleResultClick(result)}
                                 >
+                                    {result.type === 'project' && (
+                                        <div className="jira-project-icon-sm" style={{ marginRight: '10px', width: '24px', height: '24px', fontSize: '12px' }}>
+                                            <Folder size={14} />
+                                        </div>
+                                    )}
                                     <div className="search-result-info">
-                                        <div className="search-result-title">{result.title}</div>
-                                        <div className="search-result-meta">{result.story_pointer} • {result.status}</div>
+                                        <div className="search-result-title">{result.title || result.name}</div>
+                                        <div className="search-result-meta">
+                                            {result.type === 'project' ? 'Project' : `${result.story_pointer} • ${result.status}`}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
