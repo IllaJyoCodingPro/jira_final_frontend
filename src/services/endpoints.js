@@ -39,5 +39,6 @@ export const endpoints = {
     stats: {
         summary: '/stats/master-admin/summary',
         history: '/stats/master-admin/mode-switch-history',
+        landing: '/stats/landing',
     },
 };
