@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -11,8 +10,8 @@ import ResetPassword from './features/auth/ResetPassword';
 import ProfilePage from './features/auth/ProfilePage';
 import ProjectList from './features/project/ProjectList';
 import Board from './features/board/Board';
-import Calendar from './features/calendar/Calendar'; // Add this
-import ActiveSprints from './features/board/ActiveSprints'; // Add this
+import Calendar from './features/calendar/Calendar';
+import ActiveSprints from './features/board/ActiveSprints';
 import Timeline from './features/timeline/Timeline';
 import NotificationsPage from './features/notifications/NotificationsPage';
 import Issues from './features/issues/Issues';
@@ -28,13 +27,14 @@ import UserManagement from './features/admin/UserManagement';
 import GlobalToast from './components/common/GlobalToast';
 import GlobalModalContainer from './components/common/GlobalModalContainer';
 import DashboardRedirect from './components/common/DashboardRedirect';
+import LoadingEmoji from './loading_emoji/LoadingEmoji'; // Imported LoadingEmoji
 
 const RequireAuth = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
-    return <div className="loading-screen">Loading...</div>;
+    return <div className="loading-screen"><LoadingEmoji /></div>;
   }
 
   if (!user) {
@@ -48,7 +48,7 @@ const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading-screen">Loading...</div>;
+    return <div className="loading-screen"><LoadingEmoji /></div>;
   }
 
   if (user) {

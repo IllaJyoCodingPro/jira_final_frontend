@@ -25,8 +25,15 @@ export const AuthProvider = ({ children }) => {
                 setUser(null);
             }
         }
-        setLoading(false);
+
+
+        // TEST MODE: 3-second delay to verify loading screen
+        setTimeout(() => {
+            setLoading(false);
+        }, 3000);
     };
+
+
     // Login function
     const login = async (email, password) => {
         const data = await authService.login(email, password);
