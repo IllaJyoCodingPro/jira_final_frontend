@@ -173,23 +173,21 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
       const selectedTeamIds = formData.team_ids.map(id => String(id));
       return users.filter(u => {
         // Check if user is in any of the selected teams
-        // Assumption: team objects have a `members` array with user objects or IDs
-        // If `members` is not available on the list endpoint, we might default to all users or need to fetch details.
-
-        // Let's try to find the team in `teams` and check members.
         const userTeams = teams.filter(t => selectedTeamIds.includes(String(t.id)));
         return userTeams.some(t => t.members && t.members.some(m => m.id === u.id));
       });
     }
-    // 2. If Story and team_id selected: Filter users in that team
+    // 2. If Story/Bug and team_id selected: Filter users in that team
     else if (!isEpic && formData.team_id) {
       const team = teams.find(t => String(t.id) === String(formData.team_id));
       if (team && team.members) {
         return team.members;
       }
+      // If team found but no members, return empty array
+      return [];
     }
 
-    // 3. Default: All Users
+    // 3. Default: All Users (when "No Team" is selected)
     return users;
   }, [isEpic, formData.team_ids, formData.team_id, teams, users]);
 
@@ -529,7 +527,9 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                 </div>
 
                 <div className="sidebar-field">
-                  <label className="jira-label">Assignee</label>
+                  <label className="jira-label">
+                    {!isEpic && formData.team_id ? "Team Members" : "Assignee"}
+                  </label>
                   <select
                     className="jira-select-premium"
                     value={formData.assignee_id}
@@ -542,33 +542,19 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                 </div>
 
                 {!isEpic && (
-                  <>
-                    <div className="sidebar-field">
-                      <label className="jira-label">Priority</label>
-                      <select
-                        className="jira-select-premium"
-                        name="priority"
-                        value={formData.priority}
-                        onChange={handleChange}
-                      >
-                        <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
-                        <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
-                        <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
-                      </select>
-                    </div>
-
-                    <div className="sidebar-field">
-                      <label className="jira-label">Sprint</label>
-                      <input
-                        type="text"
-                        className="jira-input-premium"
-                        name="sprint_number"
-                        value={formData.sprint_number}
-                        onChange={handleChange}
-                        placeholder="Sprint 1"
-                      />
-                    </div>
-                  </>
+                  <div className="sidebar-field">
+                    <label className="jira-label">Priority</label>
+                    <select
+                      className="jira-select-premium"
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleChange}
+                    >
+                      <option value={ISSUE_PRIORITY.HIGH}>{ISSUE_PRIORITY.HIGH}</option>
+                      <option value={ISSUE_PRIORITY.MEDIUM}>{ISSUE_PRIORITY.MEDIUM}</option>
+                      <option value={ISSUE_PRIORITY.LOW}>{ISSUE_PRIORITY.LOW}</option>
+                    </select>
+                  </div>
                 )}
               </div>
             </form>
