@@ -44,96 +44,105 @@ export default function Login() {
     };
 
     return (
-        <div className="jira-page-container">
-            <div className="jira-blue-header">
-                <div className="jira-header-container">
-                    <div className="jira-header-content">
-                        <div className="jira-logo-area">
-                            <img src={kietLogo} alt="KIET" className="jira-logo-img" />
-                            <span className="jira-logo-text">KIET</span>
-                        </div>
-                        <div className="jira-sub-header">Jira</div>
-                    </div>
+        <div className="auth-container">
+            {/* Left Panel - Brand & Marketing */}
+            <div className="auth-left">
+                <div className="auth-brand">
+                    <img src={kietLogo} alt="KIET" />
+                    <span>KIET</span>
+                </div>
+
+                <div className="auth-marketing-content">
+                    <h1 className="marketing-hero-text">
+                        Welcome back to <br />
+                        your team workspace.
+                    </h1>
+                </div>
+
+                <div className="auth-illustration">
+                    <div className="illustration-bar" style={{ height: '120px' }}></div>
+                    <div className="illustration-bar" style={{ height: '180px', background: 'rgba(255,255,255,0.5)' }}></div>
+                    <div className="illustration-bar" style={{ height: '140px' }}></div>
                 </div>
             </div>
 
-            <div className="jira-content-wrapper">
-                <div className="jira-marketing-col">
-                    <div className="jira-illustration-placeholder">
-                        <div className="jira-bar-1"></div>
-                        <div className="jira-bar-2"></div>
-                        <div className="jira-bar-3"></div>
+            {/* Right Panel - Form */}
+            <div className="auth-right">
+                <div className="auth-card">
+                    <div className="auth-header">
+                        <h2 className="auth-title">Log in</h2>
+                        <p className="auth-subtitle">Continue to KIET Jira</p>
                     </div>
 
-                    <h3 className="jira-marketing-title">Welcome back to your team</h3>
+                    {message && (
+                        <div className="error-toast" style={{ borderColor: '#48bb78', color: '#22543d', background: '#c6f6d5' }}>
+                            ✅ {message}
+                        </div>
+                    )}
 
-                    <div className="jira-checklist">
-                        <div className="jira-check-item">✓ Continue where you left off</div>
-                        <div className="jira-check-item">✓ Check your latest tasks</div>
-                        <div className="jira-check-item">✓ Collaborate in real-time</div>
-                    </div>
-                </div>
+                    {error && (
+                        <div className="error-toast">
+                            ⚠️ {error}
+                        </div>
+                    )}
 
-                <div className="jira-form-card">
-                    <h2 className="jira-card-header">Log in</h2>
-                    <p className="jira-card-sub-header">Continue to KIET Jira</p>
+                    <form onSubmit={handleSubmit} className="auth-form">
 
-                    {message && <div className="jira-auth-success-toast">{message}</div>}
-                    {error && <div className="jira-auth-error-toast">{error}</div>}
-
-                    <form onSubmit={handleSubmit} className="jira-form-stack">
-                        <div className="jira-field-group">
-                            <label className="jira-label">Email</label>
+                        {/* Floating Label: Email */}
+                        <div className="floating-group">
                             <input
                                 type="email"
-                                className="jira-input"
-                                placeholder="Enter your email"
+                                className="floating-input"
+                                placeholder=" "
                                 value={form.email}
                                 onChange={e => setForm({ ...form, email: e.target.value })}
                                 required
                             />
+                            <label className="floating-label">Email</label>
                         </div>
 
-                        <div className="jira-field-group">
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <label className="jira-label">Password</label>
-                                <span
-                                    className="jira-link"
-                                    style={{ fontSize: "12px" }}
-                                    onClick={() => navigate("/forgot-password")}
-                                >
-                                    Forgot Password?
-                                </span>
-                            </div>
-                            <div className="jira-input-wrapper">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    className="jira-input"
-                                    placeholder="Enter password"
-                                    value={form.password}
-                                    onChange={e => setForm({ ...form, password: e.target.value })}
-                                    required
-                                />
-                                <span
-                                    className="jira-password-toggle"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? "👁️" : "👁️‍🗨️"}
-                                </span>
-                            </div>
+                        {/* Floating Label: Password */}
+                        <div className="floating-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="floating-input"
+                                placeholder=" "
+                                value={form.password}
+                                onChange={e => setForm({ ...form, password: e.target.value })}
+                                required
+                            />
+                            <label className="floating-label">Password</label>
+
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? "👁️" : "👁️‍🗨️"}
+                            </button>
                         </div>
 
-                        <button type="submit" className="jira-submit-btn" disabled={loading}>
+                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "-16px" }}>
+                            <span
+                                className="auth-link"
+                                style={{ fontSize: "12px" }}
+                                onClick={() => navigate("/forgot-password")}
+                            >
+                                Forgot Password?
+                            </span>
+                        </div>
+
+                        <button type="submit" className="submit-btn" disabled={loading}>
                             {loading ? "Logging in..." : "Log in"}
                         </button>
                     </form>
 
-                    <div className="jira-login-link-container">
-                        <span style={{ color: "#42526e" }}>Don't have an account? </span>
-                        <span className="jira-link" onClick={() => navigate("/signup")}>Sign up</span>
+                    <div className="auth-footer">
+                        Don't have an account?{" "}
+                        <span className="auth-link" onClick={() => navigate("/signup")}>
+                            Sign up
+                        </span>
                     </div>
-
-                    <div className="jira-no-credit-card">SECURE LOGIN</div>
                 </div>
             </div>
         </div>

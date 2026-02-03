@@ -10,7 +10,7 @@ export default function Signup() {
         email: "",
         full_name: "",
         password: "",
-        role: "VIEWER"
+        role: "DEVELOPER"
     });
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
@@ -76,154 +76,152 @@ export default function Signup() {
     };
 
     return (
-        <div className="jira-page-container">
-            <div className="jira-blue-header">
-                <div className="jira-header-container">
-                    <div className="jira-header-content">
-                        <div className="jira-logo-area">
-                            <img src={kietLogo} alt="KIET" className="jira-logo-img" />
-                            <span className="jira-logo-text">KIET</span>
-                        </div>
-                        <div className="jira-sub-header">Project Suite</div>
-                    </div>
+        <div className="auth-container">
+            {/* Left Panel - Brand & Marketing */}
+            <div className="auth-left">
+                <div className="auth-brand">
+                    <img src={kietLogo} alt="KIET" />
+                    <span>KIET</span>
+                </div>
+
+                <div className="auth-marketing-content">
+                    <h1 className="marketing-hero-text">
+                        Project management <br />
+                        built for high-velocity teams.
+                    </h1>
+                </div>
+
+                <div className="auth-illustration">
+                    <div className="illustration-bar" style={{ height: '120px' }}></div>
+                    <div className="illustration-bar" style={{ height: '180px', background: 'rgba(255,255,255,0.5)' }}></div>
+                    <div className="illustration-bar" style={{ height: '140px' }}></div>
                 </div>
             </div>
 
-            <div className="jira-content-wrapper">
-                <div className="jira-marketing-col">
-                    <div className="jira-illustration-placeholder">
-                        <div className="jira-bar-1"></div>
-                        <div className="jira-bar-2"></div>
-                        <div className="jira-bar-3"></div>
+            {/* Right Panel - Form */}
+            <div className="auth-right">
+                <div className="auth-card">
+                    <div className="auth-header">
+                        <h2 className="auth-title">Create your account</h2>
+                        <p className="auth-subtitle">Get started with KIET Project Suite today.</p>
                     </div>
 
-                    <h3 className="jira-marketing-title">Trusted by over 65,000 teams worldwide</h3>
+                    {passwordError && (
+                        <div className="error-toast">
+                            ⚠️ {passwordError}
+                        </div>
+                    )}
 
-                    <div className="jira-logos-row">
-                        <span className="jira-logo-item-text">Square</span>
-                        <span className="jira-logo-item-text">VISA</span>
-                        <span className="jira-logo-item-text">CISCO</span>
-                        <span className="jira-logo-item-text">Pfizer</span>
-                    </div>
+                    <form onSubmit={handleSubmit} className="auth-form">
 
-                    <div className="jira-checklist">
-                        <div className="jira-check-item">✓ Scale agile practices</div>
-                        <div className="jira-check-item">✓ Consolidate workflows</div>
-                        <div className="jira-check-item">✓ Expand visibility</div>
-                        <div className="jira-check-item">✓ Plan, track, and release</div>
-                    </div>
-                </div>
-
-                <div className="jira-form-card">
-                    <h2 className="jira-card-header">Sign up</h2>
-                    <p className="jira-card-sub-header">Create your KIET Project Suite account</p>
-
-                    {passwordError && <div className="jira-auth-error-toast">{passwordError}</div>}
-
-                    <form onSubmit={handleSubmit} className="jira-form-stack">
-                        <div className="jira-field-group">
-                            <label className="jira-label">Full Name</label>
+                        {/* Floating Label: Full Name */}
+                        <div className="floating-group">
                             <input
                                 type="text"
-                                className="jira-input"
-                                placeholder="Enter your full name"
+                                className="floating-input"
+                                placeholder=" "
                                 value={form.full_name}
                                 onChange={e => setForm({ ...form, full_name: e.target.value })}
                                 required
                             />
+                            <label className="floating-label">Full Name</label>
                         </div>
 
-                        <div className="jira-field-group">
-                            <label className="jira-label">Work Email</label>
+                        {/* Floating Label: Work Email */}
+                        <div className="floating-group">
                             <input
                                 type="email"
-                                className="jira-input"
-                                placeholder="Enter your email"
+                                className="floating-input"
+                                placeholder=" "
                                 value={form.email}
                                 onChange={e => setForm({ ...form, email: e.target.value })}
                                 required
                             />
+                            <label className="floating-label">Work Email</label>
                         </div>
 
-                        <div className="jira-field-group">
-                            <label className="jira-label">Role</label>
+                        {/* Floating Label: Role (Select) */}
+                        <div className="floating-group">
                             <select
-                                className="jira-input"
+                                className="floating-input"
                                 value={form.role}
                                 onChange={e => setForm({ ...form, role: e.target.value })}
                             >
-                                <option value="VIEWER">Viewer (Read Only)</option>
                                 <option value="DEVELOPER">Developer</option>
                                 <option value="TESTER">Tester</option>
                             </select>
+                            <label className="floating-label" style={{ top: '14px', fontSize: '11px', color: '#0052cc', fontWeight: 700 }}>Role</label>
                         </div>
 
-                        <div className="jira-field-group">
-                            <label className="jira-label">Password</label>
-                            <div className="jira-input-wrapper">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    className="jira-input"
-                                    placeholder="Create a password"
-                                    value={form.password}
-                                    onChange={e => setForm({ ...form, password: e.target.value })}
-                                    required
-                                />
-                                <span
-                                    className="jira-password-toggle"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? "👁️" : "👁️‍🗨️"}
-                                </span>
+                        {/* Floating Label: Password */}
+                        <div className="floating-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="floating-input"
+                                placeholder=" "
+                                value={form.password}
+                                onChange={e => setForm({ ...form, password: e.target.value })}
+                                required
+                            />
+                            <label className="floating-label">Password</label>
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? "👁️" : "👁️‍🗨️"}
+                            </button>
+                        </div>
+
+                        {form.password && (
+                            <div className="password-requirements">
+                                {rules.map((rule, index) => (
+                                    <div key={index} className="req-item">
+                                        <span
+                                            className="req-icon"
+                                            style={{ color: rule.valid ? '#36b37e' : '#ff5630' }}
+                                        >
+                                            {rule.valid ? '✓' : '•'}
+                                        </span>
+                                        <span style={{ color: rule.valid ? '#172b4d' : '#5e6c84' }}>
+                                            {rule.label}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
-                            {form.password && (
-                                <div className="jira-password-requirements">
-                                    <div className="jira-password-requirements-header">Password Requirements</div>
-                                    {rules.map((rule, index) => (
-                                        <div key={index} className="jira-rule-item">
-                                            <span className="jira-rule-check">
-                                                {rule.valid ? '✓' : '✗'}
-                                            </span>
-                                            <span style={{ color: rule.valid ? '#00875a' : '#de350b' }}>
-                                                {rule.label}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                        )}
+
+                        {/* Floating Label: Confirm Password */}
+                        <div className="floating-group">
+                            <input
+                                type={showConfirmPassword ? "text" : "password"}
+                                className="floating-input"
+                                placeholder=" "
+                                value={confirmPassword}
+                                onChange={handleConfirmChange}
+                                required
+                            />
+                            <label className="floating-label">Confirm Password</label>
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                            </button>
                         </div>
 
-                        <div className="jira-field-group">
-                            <label className="jira-label">Confirm Password</label>
-                            <div className="jira-input-wrapper">
-                                <input
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    className="jira-input"
-                                    placeholder="Confirm your password"
-                                    value={confirmPassword}
-                                    onChange={handleConfirmChange}
-                                    required
-                                />
-                                <span
-                                    className="jira-password-toggle"
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                >
-                                    {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
-                                </span>
-                            </div>
-                        </div>
-
-                        <button type="submit" className="jira-submit-btn" disabled={loading || !allRulesMet}>
+                        <button type="submit" className="submit-btn" disabled={loading || !allRulesMet}>
                             {loading ? "Creating account..." : "Create account"}
                         </button>
                     </form>
 
-                    <div className="jira-login-link-container">
-                        <span style={{ color: "#42526e" }}>Already have an account? </span>
-                        <span className="jira-link" onClick={() => navigate("/login")}>Log in</span>
+                    <div className="auth-footer">
+                        Already have an account?{" "}
+                        <span className="auth-link" onClick={() => navigate("/login")}>
+                            Log in
+                        </span>
                     </div>
-
-                    <div className="jira-no-credit-card">NO CREDIT CARD REQUIRED</div>
                 </div>
             </div>
         </div>
