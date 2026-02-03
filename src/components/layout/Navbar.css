@@ -270,3 +270,22 @@
     width: 280px;
     z-index: 2001;
 }
+
+@media (max-width: 900px) {
+    .jira-main-nav {
+        display: none;
+        /* Hide main links on tablet/mobile */
+    }
+
+    .jira-search-container {
+        display: none;
+        /* Hide search bar on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .jira-logo-text {
+        display: none;
+        /* Only show icon on very small screens */
+    }
+}

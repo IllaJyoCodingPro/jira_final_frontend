@@ -25,3 +25,14 @@
     margin-left: 0;
     width: 100%;
 }
+
+@media (max-width: 768px) {
+    .jira-main-content {
+        margin-left: 0;
+        padding: 16px;
+    }
+
+    .jira-layout {
+        flex-direction: column;
+    }
+}

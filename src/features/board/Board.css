@@ -110,6 +110,29 @@
     color: #5e6c84;
 }
 
+.board-columns {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 20px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.board-columns::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+@media (max-width: 1024px) {
+    .board-column {
+        min-width: 280px;
+        flex-shrink: 0;
+    }
+}
+
 .jira-board-canvas {
     display: flex;
     flex: 1;
