@@ -1,129 +1,80 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Layout from './components/layout/Layout';
+
+// Features
 import LandingPage from './features/landing/LandingPage';
 import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
-import ForgotPassword from './features/auth/ForgotPassword';
-import ResetPassword from './features/auth/ResetPassword';
-import ProfilePage from './features/auth/ProfilePage';
+import JiraIntroduction from './features/intro/JiraIntroduction';
 import ProjectList from './features/project/ProjectList';
-import Board from './features/board/Board';
-import Calendar from './features/calendar/Calendar';
-import ActiveSprints from './features/board/ActiveSprints';
-import Timeline from './features/timeline/Timeline';
-import NotificationsPage from './features/notifications/NotificationsPage';
-import Issues from './features/issues/Issues';
-import YourWork from './features/issues/YourWork';
-import ProjectSettings from './features/project/ProjectSettings';
 import ProjectSummary from './features/project/ProjectSummary';
-import ListView from './features/issues/ListView';
-import TeamsPage from './features/project/TeamsPage';
-import TeamDetailsPage from './features/project/TeamDetailsPage';
+import Issues from './features/issues/Issues';
+import Board from './features/board/Board';
+import Timeline from './features/timeline/Timeline';
+import ProjectSettings from './features/project/ProjectSettings';
+import Calendar from './features/calendar/Calendar';
 import IssueDetailPage from './features/issues/IssueDetailPage';
-import RecentActivityPage from './features/issues/RecentActivityPage';
-import UserManagement from './features/admin/UserManagement';
+import YourWork from './features/issues/YourWork';
+
+// Common Components
+import DashboardRedirect from './components/common/DashboardRedirect';
 import GlobalToast from './components/common/GlobalToast';
 import GlobalModalContainer from './components/common/GlobalModalContainer';
-import DashboardRedirect from './components/common/DashboardRedirect';
-import LoadingEmoji from './loading_emoji/LoadingEmoji'; // Imported LoadingEmoji
+import GlobalProjectModalContainer from './components/common/GlobalProjectModalContainer';
 
-const RequireAuth = ({ children }) => {
-  const { user, loading } = useAuth();
-  const location = useLocation();
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
 
-  if (loading) {
-    return <div className="loading-screen"><LoadingEmoji /></div>;
-  }
+    if (loading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                Loading...
+            </div>
+        );
+    }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  return children;
+    return user ? children : <Navigate to="/login" replace />;
 };
 
-const PublicRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return <div className="loading-screen"><LoadingEmoji /></div>;
-  }
-
-  if (user) {
-    return <Navigate to="/my-work" replace />;
-  }
-
-  return children;
+// Standalone Route (for pages that don't require authentication)
+const StandaloneRoute = ({ children }) => {
+    return children;
 };
 
 const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <div className="app-container">
-          <GlobalToast />
-          <GlobalModalContainer />
+    return (
+        <AuthProvider>
+            <Router>
+                <GlobalToast />
+                <GlobalModalContainer />
+                <GlobalProjectModalContainer />
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<StandaloneRoute><LandingPage /></StandaloneRoute>} />
+                    <Route path="/login" element={<StandaloneRoute><Login /></StandaloneRoute>} />
+                    <Route path="/signup" element={<StandaloneRoute><Signup /></StandaloneRoute>} />
+                    <Route path="/about" element={<StandaloneRoute><JiraIntroduction /></StandaloneRoute>} />
 
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            } />
-            <Route path="/signup" element={
-              <PublicRoute>
-                <Signup />
-              </PublicRoute>
-            } />
-            <Route path="/forgot-password" element={
-              <PublicRoute>
-                <ForgotPassword />
-              </PublicRoute>
-            } />
-            <Route path="/reset-password" element={
-              <PublicRoute>
-                <ResetPassword />
-              </PublicRoute>
-            } />
+                    {/* Protected Routes */}
+                    <Route path="/dashboard" element={<ProtectedRoute><YourWork /></ProtectedRoute>} />
+                    <Route path="/projects" element={<ProtectedRoute><ProjectList /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectSummary /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/backlog" element={<ProtectedRoute><Issues /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/board" element={<ProtectedRoute><Board /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/settings" element={<ProtectedRoute><ProjectSettings /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/issues/:issueId" element={<ProtectedRoute><IssueDetailPage /></ProtectedRoute>} />
+                    <Route path="/admin" element={<ProtectedRoute><YourWork /></ProtectedRoute>} />
 
-            {/* Protected Routes */}
-            <Route element={<RequireAuth><Layout /></RequireAuth>}>
-              <Route path="/dashboard" element={<DashboardRedirect />} />
-              <Route path="/projects" element={<ProjectList />} />
-              <Route path="/my-work" element={<YourWork />} />
-              <Route path="/activity" element={<RecentActivityPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/admin/users" element={<UserManagement />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
-
-              {/* Project specific routes */}
-              <Route path="/projects/:projectId/summary" element={<ProjectSummary />} />
-              <Route path="/projects/:projectId/list" element={<ListView />} />
-              <Route path="/projects/:projectId/board" element={<Board />} />
-              <Route path="/projects/:projectId/active-sprints" element={<ActiveSprints />} />
-              <Route path="/projects/:projectId/calendar" element={<Calendar />} />
-              <Route path="/projects/:projectId/timeline" element={<Timeline />} />
-              <Route path="/projects/:projectId/issues" element={<Issues />} />
-              <Route path="/projects/:projectId/activity" element={<RecentActivityPage />} />
-              <Route path="/projects/:projectId/settings" element={<ProjectSettings />} />
-              <Route path="/projects/:projectId/teams" element={<TeamsPage />} />
-              <Route path="/projects/:projectId/teams/:teamId" element={<TeamDetailsPage />} />
-            </Route>
-
-            {/* Standalone Route for Issue Detail Page (No Navbar/Sidebar) */}
-            <Route path="/projects/:projectId/issues/:issueId" element={<RequireAuth><IssueDetailPage /></RequireAuth>} />
-
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
-  );
+                    {/* Fallback */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
+    );
 };
 
 export default App;

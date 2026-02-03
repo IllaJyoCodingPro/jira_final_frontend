@@ -195,6 +195,9 @@ const LandingPage = () => {
                         <img src={kietLogo} alt="KIET" style={{ height: '24px', marginRight: '8px' }} />
                         <span className="landing-logo-text">KIET Jira</span>
                     </div>
+                    <div style={{ display: 'flex', gap: '24px', marginLeft: '40px' }}>
+                        <span className="landing-nav-link" onClick={() => navigate('/about')}>Jira Workflow</span>
+                    </div>
                 </div>
                 <div className="landing-nav-end">
                     <button className="landing-btn-free" onClick={() => navigate("/signup", { state: { email: emailInput } })}>Sign up</button>

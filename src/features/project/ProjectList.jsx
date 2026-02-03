@@ -16,7 +16,8 @@ import {
     Layers,
     Search,
     Filter,
-    MoreHorizontal
+    MoreHorizontal,
+    Settings
 } from 'lucide-react';
 import { formatDateTime } from '../../utils/dateUtils';
 
@@ -30,6 +31,7 @@ const ProjectList = () => {
     const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
     const [teamProjectId, setTeamProjectId] = useState(null);
     const [users, setUsers] = useState([]);
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const navigate = useNavigate();
 
     // Fetch users for the Team Modal
@@ -40,6 +42,17 @@ const ProjectList = () => {
                 .catch(err => console.error("Failed to fetch users", err));
         }
     }, [isTeamModalOpen]);
+    
+    // Handle click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (activeDropdown && !event.target.closest('.more-btn') && !event.target.closest('.project-card-dropdown')) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [activeDropdown]);
 
     const handleOpenTeamModal = (projectId) => {
         setTeamProjectId(projectId);
@@ -136,7 +149,33 @@ const ProjectList = () => {
                                         <h3 className="project-name">{project.name}</h3>
                                         <span className="project-key">{project.project_prefix} Project</span>
                                     </div>
-                                    <button className="more-btn"><MoreHorizontal size={18} /></button>
+                                    <div className="more-btn-container" onClick={(e) => e.stopPropagation()}>
+                                        <button 
+                                            className="more-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActiveDropdown(activeDropdown === project.id ? null : project.id);
+                                            }}
+                                        >
+                                            <MoreHorizontal size={18} />
+                                        </button>
+                                        
+                                        {activeDropdown === project.id && (
+                                            <div className="project-card-dropdown glass animate-scale-in">
+                                                <div 
+                                                    className="dropdown-item"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/projects/${project.id}/settings`);
+                                                        setActiveDropdown(null);
+                                                    }}
+                                                >
+                                                    <Settings size={14} />
+                                                    <span>Project Settings</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="card-body">

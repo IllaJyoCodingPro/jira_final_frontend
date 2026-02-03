@@ -18,7 +18,7 @@ export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const { signup } = useAuth();
+    const { signup, login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -55,7 +55,9 @@ export default function Signup() {
         setLoading(true);
         try {
             await signup(form.full_name, form.email.toLowerCase(), form.password, form.role);
-            navigate("/login", { state: { message: "Signup successful! Please log in with your new account." } });
+            // Auto login after signup
+            await login(form.email.toLowerCase(), form.password);
+            navigate("/about");
         } catch (err) {
             const serverError = err.response?.data;
             const errorMessage = serverError ? formatError(serverError) : (err.message || "Unknown error");

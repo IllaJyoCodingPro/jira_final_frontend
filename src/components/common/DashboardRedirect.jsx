@@ -8,10 +8,10 @@ const DashboardRedirect = () => {
     useEffect(() => {
         const checkProjects = async () => {
             try {
-                navigate('/my-work');
+                navigate('/projects');
             } catch (error) {
                 console.error("Failed to redirect", error);
-                navigate('/my-work');
+                navigate('/projects');
             }
         };
         checkProjects();

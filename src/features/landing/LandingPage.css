@@ -68,6 +68,19 @@
     font-size: 14px;
 }
 
+.landing-nav-link {
+    text-decoration: none;
+    color: #42526e;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.landing-nav-link:hover {
+    color: #0052cc;
+}
+
 /* Hero Section */
 .landing-hero {
     display: flex;

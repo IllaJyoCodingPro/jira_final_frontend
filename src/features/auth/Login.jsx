@@ -29,7 +29,7 @@ export default function Login() {
         setLoading(true);
         try {
             await login(form.email.toLowerCase(), form.password);
-            navigate("/my-work");
+            navigate("/projects");
         } catch (err) {
             console.error(err);
             const serverError = err.response?.data;

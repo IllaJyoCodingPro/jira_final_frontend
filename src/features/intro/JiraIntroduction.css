@@ -1,0 +1,382 @@
+:root {
+    /* --- Enterprise SaaS Palette --- */
+    --saas-primary: #4F46E5;
+    --saas-primary-hover: #4338CA;
+    --saas-text-main: #111827;
+    --saas-text-sub: #4B5563;
+    --saas-bg-body: #FFFFFF;
+    --saas-border: #E5E7EB;
+    --saas-accent-bg: #EEF2FF;
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --radius-md: 12px;
+    --radius-sm: 6px;
+    --container-max: 1100px;
+    --sidebar-w: 240px;
+}
+
+/* --- Global Reset --- */
+.product-page-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--saas-bg-body);
+    font-family: var(--font-stack);
+    color: var(--saas-text-main);
+}
+
+/* --- Centered Wrapper --- */
+.intro-layout-wrapper {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    display: flex;
+    gap: 64px;
+    padding: 80px 24px;
+}
+
+/* --- Seamless Sticky Navigation --- */
+.intro-sidebar {
+    width: var(--sidebar-w);
+    position: sticky;
+    top: 40px;
+    height: fit-content;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    margin-bottom: 40px;
+}
+
+.sidebar-brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--saas-text-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 4px;
+}
+
+.nav-item {
+    display: block;
+    padding: 10px 12px;
+    color: var(--saas-text-sub);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    color: var(--saas-primary);
+    background-color: var(--saas-accent-bg);
+}
+
+.nav-item.active {
+    color: var(--saas-primary);
+    font-weight: 600;
+}
+
+/* --- Main Content Area --- */
+.intro-content {
+    flex: 1;
+    min-width: 0;
+    /* Prevents flex overflow */
+}
+
+/* --- Sections --- */
+.doc-section {
+    margin-bottom: 100px;
+    scroll-margin-top: 40px;
+}
+
+.doc-section h1 {
+    font-size: 52px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    letter-spacing: -1.5px;
+    color: var(--saas-text-main);
+    line-height: 1.05;
+}
+
+.doc-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--saas-text-main);
+    letter-spacing: -0.5px;
+}
+
+.doc-section p {
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--saas-text-sub);
+    margin-bottom: 24px;
+}
+
+/* --- Role Chart Layout --- */
+.role-org-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    background: #F9FAFB;
+    padding: 48px;
+    border-radius: 24px;
+    border: 1px solid var(--saas-border);
+    margin-top: 32px;
+}
+
+.role-level-1 {
+    display: flex;
+    justify-content: center;
+}
+
+.role-level-2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.role-card-modern {
+    background: white;
+    padding: 32px 24px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--saas-border);
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.role-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+    border-color: var(--saas-primary);
+}
+
+.role-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--saas-accent-bg);
+    color: var(--saas-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.role-card-modern h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.role-card-modern p {
+    font-size: 14px;
+    color: var(--saas-text-sub);
+    line-height: 1.6;
+}
+
+/* --- Infinite Scrolling Workflow Carousel --- */
+.workflow-carousel {
+    width: 100%;
+    overflow: hidden;
+    padding: 40px 0;
+    background: linear-gradient(to bottom, #F9FAFB, #FFFFFF);
+    border-radius: var(--radius-md);
+    position: relative;
+}
+
+.workflow-track {
+    display: flex;
+    gap: 32px;
+    animation: infiniteScroll 30s linear infinite;
+    width: fit-content;
+}
+
+.workflow-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes infiniteScroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.workflow-card {
+    min-width: 320px;
+    max-width: 320px;
+    background: white;
+    padding: 32px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--saas-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: cardPulse 4s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.workflow-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.15);
+    border-color: var(--saas-primary);
+}
+
+@keyframes cardPulse {
+
+    0%,
+    100% {
+        opacity: 0.9;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.workflow-card-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--saas-accent-bg);
+    color: var(--saas-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.workflow-card h4 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--saas-text-main);
+}
+
+.workflow-card-purpose {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--saas-text-sub);
+    margin-bottom: 20px;
+    min-height: 48px;
+}
+
+.workflow-card-meta {
+    margin-bottom: 12px;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.workflow-card-meta .meta-label {
+    font-weight: 600;
+    color: var(--saas-text-main);
+}
+
+.workflow-card-meta span:last-child {
+    color: var(--saas-text-sub);
+    line-height: 1.5;
+}
+
+
+/* --- Benefits Grid --- */
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+}
+
+.benefit-card-simple {
+    display: flex;
+    gap: 20px;
+    padding: 24px;
+    border: 1px solid var(--saas-border);
+    border-radius: var(--radius-md);
+    transition: border-color 0.2s;
+}
+
+.benefit-card-simple:hover {
+    border-color: var(--saas-primary);
+}
+
+.benefit-icon {
+    color: var(--saas-primary);
+    flex-shrink: 0;
+}
+
+.benefit-content h4 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* --- Simple Footer --- */
+.simple-footer {
+    padding-top: 48px;
+    margin-top: 48px;
+    border-top: 1px solid var(--saas-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-copy {
+    font-size: 14px;
+    color: var(--saas-text-sub);
+}
+
+.btn-back-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background-color: var(--saas-text-main);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.btn-back-action:hover {
+    background-color: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 900px) {
+    .intro-layout-wrapper {
+        flex-direction: column;
+        padding: 40px 24px;
+    }
+
+    .intro-sidebar {
+        width: 100%;
+        position: static;
+        margin-bottom: 48px;
+    }
+
+    .role-level-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .doc-section h1 {
+        font-size: 36px;
+    }
+}

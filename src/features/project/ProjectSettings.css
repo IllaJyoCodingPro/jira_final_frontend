@@ -180,6 +180,63 @@
     color: #a5adba;
 }
 
+/* Project Identity */
+.identity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.identity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f4f5f7;
+    border: 1px solid #dfe1e6;
+}
+
+.identity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.identity-icon.admin {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.identity-icon.date {
+    background: #fffae6;
+    color: #ff8b00;
+}
+
+.identity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.identity-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b778c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.identity-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
 /* Avatar Upload */
 .avatar-upload-zone {
     display: flex;
@@ -246,14 +303,17 @@
 /* Footer */
 .settings-footer {
     display: flex;
+    align-items: center;
     gap: 16px;
     padding-top: 32px;
     border-top: 1px solid #f4f5f7;
+    margin-top: 24px;
 }
 
 .btn-save {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 10px 24px;
     background: #0052cc;
@@ -263,19 +323,49 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    user-select: none;
+    white-space: nowrap;
 }
 
 .btn-save:hover {
     background: #0065ff;
 }
 
+.btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-danger {
+    background: #ef4444 !important;
+}
+
+.btn-danger:hover {
+    background: #dc2626 !important;
+}
+
+.btn-success {
+    background: #10b981 !important;
+}
+
+.btn-success:hover {
+    background: #059669 !important;
+}
+
 .btn-cancel {
     padding: 10px 24px;
     background: transparent;
-    border: none;
+    border: 1px solid #dfe1e6;
+    border-radius: 6px;
     color: #42526e;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #f4f5f7;
+    color: #172b4d;
 }
 
 /* Danger Zone */

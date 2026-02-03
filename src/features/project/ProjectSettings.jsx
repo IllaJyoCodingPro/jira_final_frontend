@@ -6,9 +6,13 @@ import {
     CheckCircle,
     AlertTriangle,
     ToggleLeft,
-    ToggleRight
+    ToggleRight,
+    User,
+    Clock
 } from 'lucide-react';
 import { projectService } from '../../services/projectService';
+import { authService } from '../../services/authService';
+import { formatDateTime } from '../../utils/dateUtils';
 import './ProjectSettings.css';
 
 const ProjectSettings = () => {
@@ -18,15 +22,27 @@ const ProjectSettings = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState(null);
+    const [creatorName, setCreatorName] = useState('Unknown');
 
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const projects = await projectService.getAll();
-                const current = projects.find(p => String(p.id) === String(projectId));
-                if (current) setProject(current);
+                const [projectsData, usersData] = await Promise.all([
+                    projectService.getAll(),
+                    authService.getAllUsers()
+                ]);
+
+                const current = projectsData.find(p => String(p.id) === String(projectId));
+                if (current) {
+                    setProject(current);
+                    // Find creator name
+                    // Find creator name
+                    const users = Array.isArray(usersData) ? usersData : [];
+                    const creator = users.find(u => u.id === current.owner_id);
+                    if (creator) setCreatorName(creator.username || creator.name);
+                }
             } catch (err) {
-                console.error("Failed to load project", err);
+                console.error("Failed to load project details", err);
             } finally {
                 setLoading(false);
             }
@@ -138,6 +154,37 @@ const ProjectSettings = () => {
                                         />
                                         <p className="field-hint">Prefix for issue IDs (e.g. WEB-123)</p>
                                     </div>
+
+
+                                </div>
+                            </div>
+
+                            <div className="settings-section">
+                                <div className="section-header">
+                                    <h3>Project Identity</h3>
+                                    <p>Core identification and administrative details</p>
+                                </div>
+                                <div className="identity-grid">
+                                    <div className="identity-item glass-subtle">
+                                        <div className="identity-icon admin">
+                                            <User size={18} />
+                                        </div>
+                                        <div className="identity-content">
+                                            <span className="identity-label">Admin / Creator</span>
+                                            <span className="identity-value">{creatorName}</span>
+                                        </div>
+                                    </div>
+                                    <div className="identity-item glass-subtle">
+                                        <div className="identity-icon date">
+                                            <Clock size={18} />
+                                        </div>
+                                        <div className="identity-content">
+                                            <span className="identity-label">Created on</span>
+                                            <span className="identity-value">
+                                                {project.created_at ? formatDateTime(project.created_at) : 'N/A'}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -150,43 +197,32 @@ const ProjectSettings = () => {
                                 </div>
                             )}
 
-                            <button type="submit" className="btn-save btn-primary" disabled={saving}>
-                                <Save size={16} />
-                                {saving ? 'Saving...' : 'Save Changes'}
-                            </button>
-                            <button type="button" className="btn-cancel" onClick={() => navigate(-1)}>Cancel</button>
+                            <div className="settings-footer">
+                                <button type="submit" className="btn-save btn-primary" disabled={saving}>
+                                    <Save size={16} />
+                                    {saving ? 'Saving...' : 'Save Changes'}
+                                </button>
+                                <button type="button" className="btn-cancel" onClick={() => navigate(-1)}>Cancel</button>
 
-                            <div style={{ flex: 1 }}></div>
+                                <div style={{ flex: 1 }}></div>
 
-                            <button
-                                type="button"
-                                className={`btn-save ${project.is_active ? 'btn-danger' : 'btn-success'}`}
-                                style={{
-                                    padding: '12px 24px',
-                                    fontSize: '1.1rem',
-                                    fontWeight: 'bold',
-                                    backgroundColor: project.is_active ? '#ef4444' : '#10b981',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px'
-                                }}
-                                onClick={handleToggleActive}
-                                disabled={saving}
-                            >
-                                {project.is_active ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
-                                {project.is_active ? 'Deactivate Project' : 'Activate Project'}
-                            </button>
+                                <button
+                                    type="button"
+                                    className={`btn-save ${project.is_active ? 'btn-danger' : 'btn-success'}`}
+                                    onClick={handleToggleActive}
+                                    disabled={saving}
+                                >
+                                    {project.is_active ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+                                    {project.is_active ? 'Deactivate Project' : 'Activate Project'}
+                                </button>
+                            </div>
                         </form>
                     </div>
 
 
                 </main>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
