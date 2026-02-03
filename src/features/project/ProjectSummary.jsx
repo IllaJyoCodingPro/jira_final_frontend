@@ -147,9 +147,9 @@ const ProjectSummary = () => {
                             <Layout size={20} color="#0052cc" />
                             <span>Board</span>
                         </Link>
-                        <Link to={`/projects/${projectId}/issues`} className="quick-action-card glass-subtle">
+                        <Link to={`/projects/${projectId}/backlog`} className="quick-action-card glass-subtle">
                             <Plus size={20} color="#36b37e" />
-                            <span>All Issues</span>
+                            <span>Backlog</span>
                         </Link>
                     </div>
 
@@ -313,7 +313,7 @@ const ProjectSummary = () => {
                                 <span>Calendar View</span>
                             </Link>
                             <Link to={`/projects/${projectId}/timeline`} className="quick-link-item">
-                                <Layout size={16} />
+                                <TrendingUp size={16} />
                                 <span>Project Roadmap</span>
                             </Link>
                         </div>

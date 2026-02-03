@@ -16,6 +16,19 @@ import ProjectSettings from './features/project/ProjectSettings';
 import Calendar from './features/calendar/Calendar';
 import IssueDetailPage from './features/issues/IssueDetailPage';
 import YourWork from './features/issues/YourWork';
+import ProfilePage from './features/auth/ProfilePage';
+import NotificationsPage from './features/notifications/NotificationsPage';
+import RecentActivityPage from './features/issues/RecentActivityPage';
+import UserManagement from './features/admin/UserManagement';
+import ActiveSprints from './features/board/ActiveSprints';
+import ListView from './features/issues/ListView';
+import TeamsPage from './features/project/TeamsPage';
+import TeamDetailsPage from './features/project/TeamDetailsPage';
+import ForgotPassword from './features/auth/ForgotPassword';
+import ResetPassword from './features/auth/ResetPassword';
+
+// Layout
+import Layout from './components/layout/Layout';
 
 // Common Components
 import DashboardRedirect from './components/common/DashboardRedirect';
@@ -56,18 +69,32 @@ const App = () => {
                     <Route path="/login" element={<StandaloneRoute><Login /></StandaloneRoute>} />
                     <Route path="/signup" element={<StandaloneRoute><Signup /></StandaloneRoute>} />
                     <Route path="/about" element={<StandaloneRoute><JiraIntroduction /></StandaloneRoute>} />
+                    <Route path="/forgot-password" element={<StandaloneRoute><ForgotPassword /></StandaloneRoute>} />
+                    <Route path="/reset-password" element={<StandaloneRoute><ResetPassword /></StandaloneRoute>} />
 
                     {/* Protected Routes */}
-                    <Route path="/dashboard" element={<ProtectedRoute><YourWork /></ProtectedRoute>} />
-                    <Route path="/projects" element={<ProtectedRoute><ProjectList /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectSummary /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/backlog" element={<ProtectedRoute><Issues /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/board" element={<ProtectedRoute><Board /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/settings" element={<ProtectedRoute><ProjectSettings /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/issues/:issueId" element={<ProtectedRoute><IssueDetailPage /></ProtectedRoute>} />
-                    <Route path="/admin" element={<ProtectedRoute><YourWork /></ProtectedRoute>} />
+                    <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                        <Route path="/dashboard" element={<YourWork />} />
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/notifications" element={<NotificationsPage />} />
+                        <Route path="/activity" element={<RecentActivityPage />} />
+                        <Route path="/admin/users" element={<UserManagement />} />
+                        <Route path="/projects" element={<ProjectList />} />
+                        <Route path="/projects/:projectId" element={<ProjectSummary />} />
+                        <Route path="/projects/:projectId/summary" element={<ProjectSummary />} />
+                        <Route path="/projects/:projectId/backlog" element={<Issues />} />
+                        <Route path="/projects/:projectId/board" element={<Board />} />
+                        <Route path="/projects/:projectId/active-sprints" element={<ActiveSprints />} />
+                        <Route path="/projects/:projectId/timeline" element={<Timeline />} />
+                        <Route path="/projects/:projectId/activity" element={<RecentActivityPage />} />
+                        <Route path="/projects/:projectId/calendar" element={<Calendar />} />
+                        <Route path="/projects/:projectId/list" element={<ListView />} />
+                        <Route path="/projects/:projectId/teams" element={<TeamsPage />} />
+                        <Route path="/projects/:projectId/teams/:teamId" element={<TeamDetailsPage />} />
+                        <Route path="/projects/:projectId/settings" element={<ProjectSettings />} />
+                        <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetailPage />} />
+                        <Route path="/admin" element={<YourWork />} />
+                    </Route>
 
                     {/* Fallback */}
                     <Route path="*" element={<Navigate to="/" replace />} />

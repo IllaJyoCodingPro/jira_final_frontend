@@ -141,7 +141,7 @@ const Navbar = ({ onCreateClick }) => {
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/login', { replace: true });
     };
 
     return (
@@ -152,7 +152,7 @@ const Navbar = ({ onCreateClick }) => {
                     <span className="jira-logo-text" style={{ fontSize: '1.5rem', fontWeight: 'bold', background: 'linear-gradient(90deg, #4F46E5, #06B6D4)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>KIET</span>
                 </div>
                 <nav className="jira-main-nav">
-                    <a href="#" className="jira-nav-link" onClick={(e) => { e.preventDefault(); navigate('/my-work'); }}>Your work</a>
+                    <a href="#" className="jira-nav-link" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); }}>Your work</a>
 
                     {/* Projects Dropdown */}
                     <div className="jira-nav-item-container" ref={dropdownRef}>
