@@ -11,6 +11,7 @@ import {
 
 } from 'lucide-react';
 import { getImageUrl } from '../../utils/renderUtils';
+import { formatDateTime } from '../../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button';
 import { projectService } from '../../services/projectService';
@@ -65,7 +66,8 @@ const Navbar = ({ onCreateClick }) => {
     useEffect(() => {
         if (isProjectsOpen) {
             projectService.getAll().then(projects => {
-                setRecentProjects(projects.slice(0, 3));
+                const sortedProjects = projects.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                setRecentProjects(sortedProjects.slice(0, 3));
             }).catch(err => console.error("Failed to fetch projects", err));
 
             // Fetch Inactive Projects
@@ -179,7 +181,9 @@ const Navbar = ({ onCreateClick }) => {
                                                         </div>
                                                         <div className="jira-project-details-sm">
                                                             <div className="name">{project.name}</div>
-                                                            <div className="type">Software project</div>
+                                                            <div className="type" style={{ fontSize: '11px', color: '#6b7280' }}>
+                                                                Created: {formatDateTime(project.created_at)}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))
