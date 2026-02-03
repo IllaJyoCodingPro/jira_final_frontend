@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
 import { formatError } from '../../utils/renderUtils';
@@ -18,6 +18,13 @@ export default function Signup() {
 
     const { signup } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.email) {
+            setForm(prev => ({ ...prev, email: location.state.email }));
+        }
+    }, [location.state]);
 
     const rules = [
         { label: "At least 8 characters", valid: form.password.length >= 8 },

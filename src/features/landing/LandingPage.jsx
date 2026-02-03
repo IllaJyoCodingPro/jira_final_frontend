@@ -7,6 +7,8 @@ import './LandingPage.css';
 const LandingPage = () => {
     const navigate = useNavigate();
     const [stats, setStats] = useState(null);
+    const [activeTab, setActiveTab] = useState('Board');
+    const [emailInput, setEmailInput] = useState('');
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -15,7 +17,6 @@ const LandingPage = () => {
                 setStats(data);
             } catch (error) {
                 console.error("Failed to fetch landing stats:", error);
-                // Fallback to static numbers if fetch fails, or keep as null/loading
                 setStats({
                     total_users: 10000,
                     total_admins: 500,
@@ -26,7 +27,164 @@ const LandingPage = () => {
         };
 
         fetchStats();
+
+        // Automatic Tab Cycling Animation on Start (Infinite Loop)
+        const sequence = ['Board', 'Timeline', 'List', 'Reports'];
+        let currentIndex = 0;
+
+        const interval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % sequence.length;
+            setActiveTab(sequence[currentIndex]);
+        }, 3000); // Switch every 3 seconds
+
+        return () => clearInterval(interval);
     }, []);
+
+    const renderReports = () => (
+        <div className="reports-view">
+            <div className="reports-grid">
+                <div className="report-stat-card animate-pop delay-1">
+                    <span className="report-stat-value">124</span>
+                    <span className="report-stat-desc">Issues resolved this week</span>
+                </div>
+                <div className="report-stat-card animate-pop delay-2">
+                    <span className="report-stat-value">12</span>
+                    <span className="report-stat-desc">Active sprints across teams</span>
+                </div>
+                <div className="report-insight-card animate-pop delay-3">
+                    <div className="insight-header">
+                        <span className="insight-icon">💡</span>
+                        <span className="insight-title">Team Insight</span>
+                    </div>
+                    <p className="insight-text">Team velocity has increased by 15% since the last sprint. Most bottlenecks were resolved in QA.</p>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderTimeline = () => (
+        <div className="timeline-view">
+            <div className="timeline-grid">
+                <div className="timeline-cols">
+                    {[1, 2, 3, 4, 5, 6].map(i => (
+                        <div key={i} className="timeline-day-col"></div>
+                    ))}
+                </div>
+                <div className="timeline-rows">
+                    <div className="timeline-task-row row-1">
+                        <div className="timeline-bar purple animate-slide">Create project brief</div>
+                    </div>
+                    <div className="timeline-task-row row-2">
+                        <div className="timeline-bar orange animate-slide delay-1">Establish branding</div>
+                    </div>
+                    <div className="timeline-task-row row-3">
+                        <div className="timeline-bar green animate-slide delay-2">User research</div>
+                    </div>
+                    <div className="timeline-task-row row-4">
+                        <div className="timeline-bar blue animate-slide delay-3">Market analysis</div>
+                    </div>
+                    <div className="timeline-task-row row-5">
+                        <div className="timeline-bar yellow animate-slide delay-4">Product design</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderBoard = () => (
+        <div className="kanban-columns">
+            {/* To Do Column */}
+            <div className="kanban-column">
+                <div className="column-header">TO DO</div>
+                <div className="kanban-card">
+                    <div className="card-text">Create project brief and goals</div>
+                    <div className="card-meta">
+                        <span className="card-id">TBT-1</span>
+                        <div className="card-avatar purple"></div>
+                    </div>
+                </div>
+                <div className="kanban-card">
+                    <div className="card-text">Establish your branding</div>
+                    <div className="card-meta">
+                        <span className="card-id">TBT-5</span>
+                        <div className="card-avatar orange" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=1)' }}></div>
+                    </div>
+                </div>
+            </div>
+
+            {/* In Progress Column */}
+            <div className="kanban-column">
+                <div className="column-header">IN PROGRESS</div>
+                <div className="kanban-card">
+                    <div className="card-text">Carry out user research</div>
+                    <div className="card-meta">
+                        <span className="card-id">TBT-2</span>
+                        <div className="card-avatar yellow" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=3)' }}></div>
+                    </div>
+                </div>
+                <div className="kanban-card">
+                    <div className="card-text">Plan content strategy</div>
+                    <div className="card-meta">
+                        <span className="card-id">TBT-4</span>
+                        <div className="card-avatar green" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=4)' }}></div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Done Column */}
+            <div className="kanban-column">
+                <div className="column-header">DONE</div>
+                <div className="kanban-card">
+                    <div className="card-text">Do market research</div>
+                    <div className="card-meta">
+                        <span className="card-id">TBT-3</span>
+                        <div className="card-avatar blue" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=6)' }}></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderList = () => (
+        <div className="list-view">
+            <div className="list-item floating-entry delay-1">
+                <div className="list-check pulse-border"></div>
+                <div className="list-content">
+                    <div className="list-task-title">Review project requirements</div>
+                    <div className="list-task-meta">TBT-10 • High Priority</div>
+                </div>
+            </div>
+            <div className="list-item floating-entry delay-2">
+                <div className="list-check"></div>
+                <div className="list-content">
+                    <div className="list-task-title">Design system update</div>
+                    <div className="list-task-meta">TBT-11 • In Progress</div>
+                </div>
+            </div>
+            <div className="list-item floating-entry delay-3">
+                <div className="list-check pulse-border"></div>
+                <div className="list-content">
+                    <div className="list-task-title">Stakeholder meeting</div>
+                    <div className="list-task-meta">TBT-12 • Scheduled</div>
+                </div>
+            </div>
+            <div className="list-item floating-entry delay-4">
+                <div className="list-check"></div>
+                <div className="list-content">
+                    <div className="list-task-title">Mobile app wireframes</div>
+                    <div className="list-task-meta">TBT-13 • New</div>
+                </div>
+            </div>
+            <div className="list-item floating-entry delay-5">
+                <div className="list-check pulse-border"></div>
+                <div className="list-content">
+                    <div className="list-task-title">QA Testing Cycle 1</div>
+                    <div className="list-task-meta">TBT-14 • Testing</div>
+                </div>
+            </div>
+        </div>
+    );
+
 
     return (
         <div className="landing-container">
@@ -39,7 +197,7 @@ const LandingPage = () => {
                     </div>
                 </div>
                 <div className="landing-nav-end">
-                    <button className="landing-btn-free" onClick={() => navigate("/signup")}>Sign up</button>
+                    <button className="landing-btn-free" onClick={() => navigate("/signup", { state: { email: emailInput } })}>Sign up</button>
                     <button className="landing-btn-signin" onClick={() => navigate("/login")}>Log in</button>
                 </div>
             </nav>
@@ -54,8 +212,17 @@ const LandingPage = () => {
 
                     <div className="landing-signup-form">
                         <label className="landing-input-label">Work email</label>
-                        <input type="email" placeholder="you@company.com" className="landing-email-input" />
-                        <button className="landing-cta-primary" onClick={() => navigate("/signup")}>Sign up</button>
+                        <input
+                            type="email"
+                            placeholder="you@company.com"
+                            className="landing-email-input"
+                            value={emailInput}
+                            onChange={(e) => setEmailInput(e.target.value)}
+                        />
+                        <button
+                            className="landing-cta-primary"
+                            onClick={() => navigate("/signup", { state: { email: emailInput } })}
+                        >Sign up</button>
                     </div>
                 </main>
 
@@ -65,9 +232,9 @@ const LandingPage = () => {
                     </div>
 
                     {/* Floating Labels */}
-                    <div className="visual-float-label label-project">Project Management</div>
-                    <div className="visual-float-label label-engineering">Engineering</div>
-                    <div className="visual-float-label label-marketing">Marketing</div>
+                    <div className="visual-float-label label-project animate-float">Project Management</div>
+                    <div className="visual-float-label label-engineering animate-float delay-1">Engineering</div>
+                    <div className="visual-float-label label-marketing animate-float delay-2">Marketing</div>
 
                     <div className="kanban-board-container">
                         <div className="kanban-header-row">
@@ -77,84 +244,30 @@ const LandingPage = () => {
                             <span className="kanban-project-name">Marketing campaign</span>
                         </div>
                         <div className="kanban-tabs">
-                            <span className="active-tab">Timeline</span>
-                            <span className="active-tab highlight">Board</span>
-                            <span>List</span>
-                            <span>Calendar</span>
+                            <span
+                                className={`active-tab ${activeTab === 'Timeline' ? 'highlight' : ''}`}
+                                onClick={() => setActiveTab('Timeline')}
+                            >Timeline</span>
+                            <span
+                                className={`active-tab ${activeTab === 'Board' ? 'highlight' : ''}`}
+                                onClick={() => setActiveTab('Board')}
+                            >Board</span>
+                            <span
+                                className={`active-tab ${activeTab === 'List' ? 'highlight' : ''}`}
+                                onClick={() => setActiveTab('List')}
+                            >List</span>
+                            <span
+                                className={`active-tab ${activeTab === 'Reports' ? 'highlight' : ''}`}
+                                onClick={() => setActiveTab('Reports')}
+                            >Reports</span>
                             <span>+</span>
                         </div>
 
-                        <div className="kanban-columns">
-                            {/* To Do Column */}
-                            <div className="kanban-column">
-                                <div className="column-header">TO DO</div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Create project brief and goals</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-1</span>
-                                        <div className="card-avatar purple"></div>
-                                    </div>
-                                </div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Establish your branding</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-5</span>
-                                        <div className="card-avatar orange" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=1)' }}></div>
-                                    </div>
-                                </div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Promote your ad</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-9</span>
-                                        <div className="card-avatar blue" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=2)' }}></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* In Progress Column */}
-                            <div className="kanban-column">
-                                <div className="column-header">IN PROGRESS</div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Carry out user research</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-2</span>
-                                        <div className="card-avatar yellow" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=3)' }}></div>
-                                    </div>
-                                </div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Plan your website layout and IA</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-4</span>
-                                        <div className="card-avatar green" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=4)' }}></div>
-                                    </div>
-                                </div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Register your domain</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-6</span>
-                                        <div className="card-avatar orange" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=5)' }}></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Done Column */}
-                            <div className="kanban-column">
-                                <div className="column-header">DONE</div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Do market competitor research</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-3</span>
-                                        <div className="card-avatar blue" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=6)' }}></div>
-                                    </div>
-                                </div>
-                                <div className="kanban-card">
-                                    <div className="card-text">Launch your website</div>
-                                    <div className="card-meta">
-                                        <span className="card-id">TBT-8</span>
-                                        <div className="card-avatar purple" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=7)' }}></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div className="kanban-content-area">
+                            {activeTab === 'Timeline' && renderTimeline()}
+                            {activeTab === 'Board' && renderBoard()}
+                            {activeTab === 'List' && renderList()}
+                            {activeTab === 'Reports' && renderReports()}
                         </div>
                     </div>
                 </div>
@@ -168,15 +281,15 @@ const LandingPage = () => {
                         <span className="landing-stat-label">Total Users</span>
                     </div>
                     <div className="landing-stat-item">
-                        <span className="landing-stat-number">{stats ? stats.total_admins: "..."}</span>
+                        <span className="landing-stat-number">{stats ? stats.total_admins : "..."}</span>
                         <span className="landing-stat-label">Total Admins</span>
                     </div>
                     <div className="landing-stat-item">
-                        <span className="landing-stat-number">{stats ? stats.total_developers: "..."}</span>
+                        <span className="landing-stat-number">{stats ? stats.total_developers : "..."}</span>
                         <span className="landing-stat-label">Developers Using</span>
                     </div>
                     <div className="landing-stat-item">
-                        <span className="landing-stat-number">{stats ? stats.total_testers: "..."}</span>
+                        <span className="landing-stat-number">{stats ? stats.total_testers : "..."}</span>
                         <span className="landing-stat-label">Testers</span>
                     </div>
                 </div>
@@ -214,7 +327,7 @@ const LandingPage = () => {
             <footer className="landing-footer">
                 <div className="landing-footer-cta">
                     <h3>Ready to start your project?</h3>
-                    <button className="landing-cta-primary" onClick={() => navigate("/signup")}>Get it free</button>
+                    <button className="landing-cta-primary" onClick={() => navigate("/signup", { state: { email: emailInput } })}>Get it free</button>
                 </div>
                 <div className="landing-footer-content">
                     <div className="landing-footer-logo">
