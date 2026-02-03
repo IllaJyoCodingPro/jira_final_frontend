@@ -179,3 +179,20 @@
     background: #deebff;
     color: #0052cc;
 }
+
+@media (max-width: 768px) {
+    .jira-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid #dfe1e6;
+        display: none;
+        /* Hide by default on mobile, suggest using a toggle if implemented */
+    }
+
+    .jira-sidebar.mobile-visible {
+        display: flex;
+    }
+}
