@@ -180,8 +180,35 @@
 
 .jira-label {
     font-size: 12px;
+    color: #44546f;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jira-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.jira-password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
     color: #6b778c;
-    font-weight: 600;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jira-password-toggle:hover {
+    color: #0052cc;
 }
 
 .jira-input {

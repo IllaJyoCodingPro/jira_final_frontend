@@ -496,6 +496,366 @@
     align-items: center;
 }
 
+/* Kanban Content Area */
+.kanban-content-area {
+    min-height: 350px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Timeline View */
+.timeline-view {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.timeline-grid {
+    display: flex;
+    position: relative;
+    min-height: 300px;
+}
+
+.timeline-cols {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.timeline-day-col {
+    flex: 1;
+    border-left: 1px solid #ebecf0;
+}
+
+.timeline-rows {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+    padding-top: 20px;
+}
+
+.timeline-task-row {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.timeline-bar {
+    height: 32px;
+    border-radius: 6px;
+    color: white;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-50px);
+    animation: slideInFade 0.8s forwards, slideRight 8s ease-in-out infinite 0.8s;
+}
+
+.timeline-bar.purple {
+    background: linear-gradient(135deg, #6554c0, #8777d9);
+    width: 150px;
+}
+
+.timeline-bar.orange {
+    background: linear-gradient(135deg, #ff991f, #ffab00);
+    width: 180px;
+}
+
+.timeline-bar.green {
+    background: linear-gradient(135deg, #36b37e, #00b8d9);
+    width: 140px;
+}
+
+.timeline-bar.blue {
+    background: linear-gradient(135deg, #0052cc, #2684ff);
+    width: 160px;
+}
+
+.timeline-bar.yellow {
+    background: linear-gradient(135deg, #ffab00, #ffc400);
+    width: 130px;
+}
+
+/* Staggered Delays */
+.delay-1 {
+    animation-delay: 0.2s, 1.2s;
+}
+
+.delay-2 {
+    animation-delay: 0.4s, 1.4s;
+}
+
+.delay-3 {
+    animation-delay: 0.6s, 1.6s;
+}
+
+.delay-4 {
+    animation-delay: 0.8s, 1.8s;
+}
+
+@keyframes slideInFade {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideRight {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(60px);
+    }
+}
+
+/* List View */
+.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+}
+
+.list-item {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 12px rgba(9, 30, 66, 0.08);
+    border: 1px solid #ebecf0;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.list-check {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #0052cc;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.list-check.pulse-border {
+    animation: pulseBorder 2s infinite;
+}
+
+.list-task-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.list-task-meta {
+    font-size: 11px;
+    color: #6b778c;
+}
+
+/* List Staggered Entrance */
+.floating-entry {
+    animation: floatIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.delay-5 {
+    animation-delay: 1s;
+}
+
+@keyframes floatIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseBorder {
+    0% {
+        border-color: #0052cc;
+        box-shadow: 0 0 0 0 rgba(0, 82, 204, 0.4);
+    }
+
+    50% {
+        border-color: #2684ff;
+        box-shadow: 0 0 0 6px rgba(0, 82, 204, 0);
+    }
+
+    100% {
+        border-color: #0052cc;
+        box-shadow: 0 0 0 0 rgba(0, 82, 204, 0);
+    }
+}
+
+/* Reports View */
+.reports-view {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto;
+    gap: 16px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.report-stat-card {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #ebecf0;
+    box-shadow: 0 4px 12px rgba(9, 30, 66, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+}
+
+.report-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0052cc;
+    line-height: 1.2;
+}
+
+.report-stat-desc {
+    font-size: 11px;
+    color: #6b778c;
+    font-weight: 600;
+}
+
+.report-insight-card {
+    grid-column: span 2;
+    background: #f4f5f7;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px dashed #c1c7d0;
+    opacity: 0;
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.insight-icon {
+    font-size: 16px;
+}
+
+.insight-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #172b4d;
+}
+
+.insight-text {
+    font-size: 12px;
+    color: #44546f;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Animations */
+.animate-pop {
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-float {
+    animation: floatingLabel 3s ease-in-out infinite;
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes floatingLabel {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-4deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(-2deg);
+    }
+}
+
+/* Update rotate for specific labels if needed */
+.label-engineering {
+    transform: rotate(-8deg);
+    animation-name: floatingEngineering;
+}
+
+.label-marketing {
+    transform: rotate(12deg);
+    animation-name: floatingMarketing;
+}
+
+@keyframes floatingEngineering {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-8deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(-5deg);
+    }
+}
+
+@keyframes floatingMarketing {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(12deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(15deg);
+    }
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.3s;
+}
+
+.delay-3 {
+    animation-delay: 0.5s;
+}
+
 .landing-copyright {
     color: #6b778c;
     font-size: 14px;

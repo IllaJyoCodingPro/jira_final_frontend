@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
 import { formatError } from '../../utils/renderUtils';
@@ -15,9 +15,18 @@ export default function Signup() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const { signup } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.email) {
+            setForm(prev => ({ ...prev, email: location.state.email }));
+        }
+    }, [location.state]);
 
     const rules = [
         { label: "At least 8 characters", valid: form.password.length >= 8 },
@@ -151,14 +160,22 @@ export default function Signup() {
 
                         <div className="jira-field-group">
                             <label className="jira-label">Password</label>
-                            <input
-                                type="password"
-                                className="jira-input"
-                                placeholder="Create a password"
-                                value={form.password}
-                                onChange={e => setForm({ ...form, password: e.target.value })}
-                                required
-                            />
+                            <div className="jira-input-wrapper">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    className="jira-input"
+                                    placeholder="Create a password"
+                                    value={form.password}
+                                    onChange={e => setForm({ ...form, password: e.target.value })}
+                                    required
+                                />
+                                <span
+                                    className="jira-password-toggle"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                                </span>
+                            </div>
                             {form.password && (
                                 <div className="jira-password-requirements">
                                     <div className="jira-password-requirements-header">Password Requirements</div>
@@ -178,14 +195,22 @@ export default function Signup() {
 
                         <div className="jira-field-group">
                             <label className="jira-label">Confirm Password</label>
-                            <input
-                                type="password"
-                                className="jira-input"
-                                placeholder="Confirm your password"
-                                value={confirmPassword}
-                                onChange={handleConfirmChange}
-                                required
-                            />
+                            <div className="jira-input-wrapper">
+                                <input
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    className="jira-input"
+                                    placeholder="Confirm your password"
+                                    value={confirmPassword}
+                                    onChange={handleConfirmChange}
+                                    required
+                                />
+                                <span
+                                    className="jira-password-toggle"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                    {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                                </span>
+                            </div>
                         </div>
 
                         <button type="submit" className="jira-submit-btn" disabled={loading || !allRulesMet}>

@@ -10,6 +10,7 @@ export default function Login() {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -104,14 +105,22 @@ export default function Login() {
                                     Forgot Password?
                                 </span>
                             </div>
-                            <input
-                                type="password"
-                                className="jira-input"
-                                placeholder="Enter password"
-                                value={form.password}
-                                onChange={e => setForm({ ...form, password: e.target.value })}
-                                required
-                            />
+                            <div className="jira-input-wrapper">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    className="jira-input"
+                                    placeholder="Enter password"
+                                    value={form.password}
+                                    onChange={e => setForm({ ...form, password: e.target.value })}
+                                    required
+                                />
+                                <span
+                                    className="jira-password-toggle"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                                </span>
+                            </div>
                         </div>
 
                         <button type="submit" className="jira-submit-btn" disabled={loading}>
