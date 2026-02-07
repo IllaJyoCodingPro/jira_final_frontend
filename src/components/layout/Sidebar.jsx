@@ -98,9 +98,9 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
                             <GanttChartSquare size={20} />
                             {!isCollapsed && <span>Timeline</span>}
                         </NavLink>
-                        <NavLink to={`/projects/${projectId}/backlog`} title="Backlog" className={({ isActive }) => `jira-nav-item ${isActive ? 'active' : ''}`}>
+                        <NavLink to={`/projects/${projectId}/backlog`} title="Issues" className={({ isActive }) => `jira-nav-item ${isActive ? 'active' : ''}`}>
                             <ListTodo size={20} />
-                            {!isCollapsed && <span>Backlog</span>}
+                            {!isCollapsed && <span>Issues</span>}
                         </NavLink>
                         <NavLink to={`/projects/${projectId}/active-sprints`} title="Active sprints" className={({ isActive }) => `jira-nav-item ${isActive ? 'active' : ''}`}>
                             <GalleryVertical size={20} />

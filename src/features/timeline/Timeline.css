@@ -698,7 +698,6 @@
 }
 
 .timeline-bar:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 20;
 }
@@ -765,19 +764,6 @@
     background: linear-gradient(135deg, #ffebe6 0%, #ffbdad 100%);
     color: #bf2600;
     border-left-color: #ff5630;
-    animation: pulse-overdue 2s ease-in-out infinite;
-}
-
-@keyframes pulse-overdue {
-
-    0%,
-    100% {
-        box-shadow: 0 2px 4px rgba(255, 86, 48, 0.2);
-    }
-
-    50% {
-        box-shadow: 0 2px 12px rgba(255, 86, 48, 0.4);
-    }
 }
 
 /* ========================================

@@ -32,6 +32,7 @@ const ProjectList = () => {
     const [teamProjectId, setTeamProjectId] = useState(null);
     const [users, setUsers] = useState([]);
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [activeNamePopup, setActiveNamePopup] = useState(null);
     const navigate = useNavigate();
 
     // Fetch users for the Team Modal
@@ -42,7 +43,7 @@ const ProjectList = () => {
                 .catch(err => console.error("Failed to fetch users", err));
         }
     }, [isTeamModalOpen]);
-    
+
     // Handle click outside to close dropdown
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -146,11 +147,29 @@ const ProjectList = () => {
                                         {project.name.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="project-info">
-                                        <h3 className="project-name">{project.name}</h3>
+                                        <div className="project-name-wrapper">
+                                            <h3
+                                                className={`project-name ${project.name.length > 15 ? 'truncated' : ''}`}
+                                                onClick={(e) => {
+                                                    if (project.name.length > 15) {
+                                                        e.stopPropagation();
+                                                        setActiveNamePopup(activeNamePopup === project.id ? null : project.id);
+                                                    }
+                                                }}
+                                            >
+                                                {project.name.length > 15 ? `${project.name.substring(0, 15)}...` : project.name}
+                                            </h3>
+                                            {activeNamePopup === project.id && (
+                                                <div className="name-popup animate-scale-in" onClick={e => e.stopPropagation()}>
+                                                    <div className="popup-header">Full Project Name</div>
+                                                    <div className="popup-content">{project.name}</div>
+                                                </div>
+                                            )}
+                                        </div>
                                         <span className="project-key">{project.project_prefix} Project</span>
                                     </div>
                                     <div className="more-btn-container" onClick={(e) => e.stopPropagation()}>
-                                        <button 
+                                        <button
                                             className="more-btn"
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -159,10 +178,10 @@ const ProjectList = () => {
                                         >
                                             <MoreHorizontal size={18} />
                                         </button>
-                                        
+
                                         {activeDropdown === project.id && (
                                             <div className="project-card-dropdown glass animate-scale-in">
-                                                <div 
+                                                <div
                                                     className="dropdown-item"
                                                     onClick={(e) => {
                                                         e.stopPropagation();

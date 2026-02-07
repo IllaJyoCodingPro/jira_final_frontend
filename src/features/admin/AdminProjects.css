@@ -146,6 +146,99 @@
     color: var(--jira-blue);
 }
 
+.date-cell {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.creator-cell {
+    position: relative;
+}
+
+.creator-badge {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #4c9aff, #2684ff);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.creator-badge:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.creator-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: white;
+    border: 1px solid #dfe1e6;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 8px 16px rgba(9, 30, 66, 0.25);
+    z-index: 100;
+    min-width: 180px;
+}
+
+.popup-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #6b778c;
+    font-weight: 700;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ebecf0;
+    padding-bottom: 4px;
+}
+
+.popup-content {
+    font-size: 13px;
+    color: #172b4d;
+    margin-bottom: 4px;
+}
+
+.popup-footer {
+    font-size: 10px;
+    color: #0052cc;
+    font-weight: 600;
+}
+
+.admin-cell {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.action-btn-teamleads {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    color: #0052cc;
+    border: 1px solid #dfe1e6;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.08);
+}
+
+.action-btn-teamleads:hover {
+    background: #ebecf0;
+    border-color: #0052cc;
+    color: #0065ff;
+}
+
 .action-btn.teams {
     background: linear-gradient(135deg, var(--jira-blue), #00b8d9);
     color: white;

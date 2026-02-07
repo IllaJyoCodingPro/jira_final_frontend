@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
@@ -118,7 +119,7 @@ export default function Login() {
                                 className="password-toggle"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? "👁️" : "👁️‍🗨️"}
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
 

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ExternalLink } from 'lucide-react';
+import { Search, ExternalLink, Users } from 'lucide-react';
 import { projectService } from '../../services/projectService';
 import { useNavigate } from 'react-router-dom';
 import ManageTeamsModal from './ManageTeamsModal';
+import { formatDateTime } from '../../utils/dateUtils';
 import './AdminProjects.css';
 
 const AdminProjects = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeCreatorPopup, setActiveCreatorPopup] = useState(null);
+    const [activeNamePopup, setActiveNamePopup] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -58,6 +61,8 @@ const AdminProjects = () => {
                         <tr>
                             <th>Project</th>
                             <th>Key</th>
+                            <th>Created At</th>
+                            <th>Creator</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -72,10 +77,41 @@ const AdminProjects = () => {
                                             }}>
                                                 {project.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <span className="project-name-text">{project.name}</span>
+                                            <div className="project-name-wrapper">
+                                                <span
+                                                    className={`project-name-text ${project.name.length > 15 ? 'truncated' : ''}`}
+                                                    onClick={() => project.name.length > 15 && setActiveNamePopup(activeNamePopup === project.id ? null : project.id)}
+                                                >
+                                                    {project.name.length > 15 ? `${project.name.substring(0, 15)}...` : project.name}
+                                                </span>
+                                                {activeNamePopup === project.id && (
+                                                    <div className="name-popup animate-scale-in">
+                                                        <div className="popup-header">Full Project Name</div>
+                                                        <div className="popup-content">{project.name}</div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </td>
                                     <td><span className="key-badge">{project.project_prefix}</span></td>
+                                    <td className="date-cell">{formatDateTime(project.created_at)}</td>
+                                    <td className="creator-cell">
+                                        <div
+                                            className="creator-badge"
+                                            onClick={() => setActiveCreatorPopup(activeCreatorPopup === project.id ? null : project.id)}
+                                        >
+                                            {project.admin_email ? project.admin_email.substring(0, 3).toUpperCase() : 'N/A'}
+                                        </div>
+                                        {activeCreatorPopup === project.id && (
+                                            <div className="creator-popup animate-scale-in">
+                                                <div className="popup-header">Created By</div>
+                                                <div className="popup-content">
+                                                    <strong>Email:</strong> {project.admin_email || 'N/A'}
+                                                </div>
+                                                <div className="popup-footer">Master Administrator</div>
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="actions-cell">
                                         <button
                                             className="action-btn view"
@@ -85,19 +121,19 @@ const AdminProjects = () => {
                                             <ExternalLink size={14} />
                                         </button>
                                         <button
-                                            className="action-btn teams"
-                                            style={{ marginLeft: '8px', padding: '4px 8px', fontSize: '12px' }}
+                                            className="action-btn-teamleads"
                                             onClick={() => setSelectedProjectForTeams(project)}
-                                            title="Manage Teams"
+                                            title="Team Leads"
                                         >
-                                            Manage Teams
+                                            <Users size={14} style={{ marginRight: '6px' }} />
+                                            Team Leads
                                         </button>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="no-data">No projects found</td>
+                                <td colSpan="5" className="no-data">No projects found</td>
                             </tr>
                         )}
                     </tbody>

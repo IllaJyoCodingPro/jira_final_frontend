@@ -34,6 +34,7 @@ const Navbar = ({ onCreateClick }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [activeNamePopup, setActiveNamePopup] = useState(null);
 
     const { user, logout } = useAuth();
     const { canCreateIssue, canManageUsers } = usePermissions();
@@ -180,7 +181,25 @@ const Navbar = ({ onCreateClick }) => {
                                                             {project.name.charAt(0).toUpperCase()}
                                                         </div>
                                                         <div className="jira-project-details-sm">
-                                                            <div className="name">{project.name}</div>
+                                                            <div className="name-wrapper" style={{ position: 'relative' }}>
+                                                                <div
+                                                                    className={`name ${project.name.length > 15 ? 'truncated' : ''}`}
+                                                                    onClick={(e) => {
+                                                                        if (project.name.length > 15) {
+                                                                            e.stopPropagation();
+                                                                            setActiveNamePopup(activeNamePopup === project.id ? null : project.id);
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {project.name.length > 15 ? `${project.name.substring(0, 15)}...` : project.name}
+                                                                </div>
+                                                                {activeNamePopup === project.id && (
+                                                                    <div className="name-popup animate-scale-in" onClick={e => e.stopPropagation()}>
+                                                                        <div className="popup-header">Full Project Name</div>
+                                                                        <div className="popup-content">{project.name}</div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                             <div className="type" style={{ fontSize: '11px', color: '#6b7280' }}>
                                                                 Created: {formatDateTime(project.created_at)}
                                                             </div>
@@ -210,7 +229,26 @@ const Navbar = ({ onCreateClick }) => {
                                                         {project.name.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div className="jira-project-details-sm">
-                                                        <div className="name" style={{ textDecoration: 'line-through', color: '#6b7280' }}>{project.name}</div>
+                                                        <div className="name-wrapper" style={{ position: 'relative' }}>
+                                                            <div
+                                                                className={`name ${project.name.length > 15 ? 'truncated' : ''}`}
+                                                                style={{ textDecoration: 'line-through', color: '#6b7280' }}
+                                                                onClick={(e) => {
+                                                                    if (project.name.length > 15) {
+                                                                        e.stopPropagation();
+                                                                        setActiveNamePopup(activeNamePopup === project.id ? null : project.id);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {project.name.length > 15 ? `${project.name.substring(0, 15)}...` : project.name}
+                                                            </div>
+                                                            {activeNamePopup === project.id && (
+                                                                <div className="name-popup animate-scale-in" onClick={e => e.stopPropagation()}>
+                                                                    <div className="popup-header">Full Project Name</div>
+                                                                    <div className="popup-content">{project.name}</div>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                         <div className="type">Inactive</div>
                                                     </div>
                                                 </div>
@@ -265,7 +303,25 @@ const Navbar = ({ onCreateClick }) => {
                                         </div>
                                     )}
                                     <div className="search-result-info">
-                                        <div className="search-result-title">{result.title || result.name}</div>
+                                        <div className="project-name-wrapper" style={{ position: 'relative' }}>
+                                            <div
+                                                className={`search-result-title ${(result.type === 'project' && result.name.length > 15) ? 'truncated' : ''}`}
+                                                onClick={(e) => {
+                                                    if (result.type === 'project' && result.name.length > 15) {
+                                                        e.stopPropagation();
+                                                        setActiveNamePopup(activeNamePopup === `search-${result.id}` ? null : `search-${result.id}`);
+                                                    }
+                                                }}
+                                            >
+                                                {result.type === 'project' && result.name.length > 15 ? `${result.name.substring(0, 15)}...` : (result.title || result.name)}
+                                            </div>
+                                            {activeNamePopup === `search-${result.id}` && (
+                                                <div className="name-popup animate-scale-in" style={{ left: '0', top: '100%' }} onClick={e => e.stopPropagation()}>
+                                                    <div className="popup-header">Full Project Name</div>
+                                                    <div className="popup-content">{result.name}</div>
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="search-result-meta">
                                             {result.type === 'project' ? 'Project' : `${result.story_pointer} • ${result.status}`}
                                         </div>

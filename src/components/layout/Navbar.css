@@ -144,6 +144,44 @@
     color: var(--ds-text);
 }
 
+.jira-project-details-sm .name.truncated {
+    cursor: pointer;
+    text-decoration: underline dotted;
+    color: #000000;
+}
+
+.name-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: white;
+    border: 1px solid #dfe1e6;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 8px 16px rgba(9, 30, 66, 0.25);
+    z-index: 2100;
+    min-width: 200px;
+    white-space: normal;
+    text-align: left;
+}
+
+.name-popup .popup-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #6b778c;
+    font-weight: 700;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ebecf0;
+    padding-bottom: 4px;
+}
+
+.name-popup .popup-content {
+    font-size: 13px;
+    color: #172b4d;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
 .jira-project-details-sm .type {
     font-size: 12px;
     color: var(--ds-text-subtlest);

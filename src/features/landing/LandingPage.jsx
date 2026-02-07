@@ -196,7 +196,7 @@ const LandingPage = () => {
                         <span className="landing-logo-text">KIET Jira</span>
                     </div>
                     <div style={{ display: 'flex', gap: '24px', marginLeft: '40px' }}>
-                        <span className="landing-nav-link" onClick={() => navigate('/about')}>Jira Workflow</span>
+                        <button className="landing-nav-link-btn" onClick={() => navigate('/about')}>Jira Workflow</button>
                     </div>
                 </div>
                 <div className="landing-nav-end">

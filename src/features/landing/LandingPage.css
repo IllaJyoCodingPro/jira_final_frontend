@@ -81,6 +81,29 @@
     color: #0052cc;
 }
 
+.landing-nav-link-btn {
+    background: linear-gradient(135deg, #0052cc 0%, #0747a6 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 14px 0 rgba(0, 82, 204, 0.39);
+}
+
+.landing-nav-link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 82, 204, 0.45);
+    background: linear-gradient(135deg, #0065ff 0%, #0052cc 100%);
+}
+
+.landing-nav-link-btn:active {
+    transform: translateY(0);
+}
+
 /* Hero Section */
 .landing-hero {
     display: flex;
